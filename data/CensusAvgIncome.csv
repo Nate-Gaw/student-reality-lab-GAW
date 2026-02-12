@@ -1,0 +1,21 @@
+major,gender,median_earnings_usd,earnings_type,notes
+Computer Science,All,100000,Minimum,Reported as $100k+ in Census summary
+Electrical Engineering,All,100000,Minimum,Reported as $100k+ in Census summary
+Mechanical Engineering,All,100000,Minimum,Reported as $100k+ in Census summary
+Economics,All,100000,Minimum,Reported as $100k+ in Census summary
+Education,All,60000,Maximum,Reported as less than $60k
+Elementary Education,All,60000,Maximum,Reported as less than $60k
+Fine Arts,All,60000,Maximum,Reported as less than $60k
+Family and Consumer Sciences,All,60000,Maximum,Reported as less than $60k
+Social Work,All,60000,Maximum,Reported as less than $60k
+Computer Science,Women,91990,Exact,Median earnings for women
+Computer Science,Men,115500,Exact,Median earnings for men
+Economics,Women,84750,Exact,Median earnings for women
+Economics,Men,107300,Exact,Median earnings for men
+History,Women,62980,Exact,Median earnings for women
+History,Men,81270,Exact,Median earnings for men
+General Business,All,80120,Exact,National median
+General Business,All (San Francisco Metro),114500,Exact,San Francisco-Oakland-Berkeley
+General Business,All (Boston Metro),91320,Exact,Boston-Cambridge-Newton
+General Business,All (Chicago Metro),85890,Exact,Chicago-Naperville-Elgin
+General Business,All (Miami Metro),64860,Exact,Miami-Fort Lauderdale-Pompano Beach
