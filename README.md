@@ -1,4 +1,4 @@
-#Is Graduate School Financially Worth It for Computer Science Majors?
+# Is Graduate School Financially Worth It for Computer Science Majors?
 
 
 Essential Question
@@ -82,4 +82,5 @@ What This Dataset Cannot Prove (Limits/Bias)
 - Does not reflect regional tech markets.
 - Does not account for unemployment risk.
 - Does not measure networking benefits.
+
 
