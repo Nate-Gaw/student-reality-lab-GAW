@@ -1,0 +1,3 @@
+degree_level,avg_salary_usd,avg_debt_usd,estimated_break_even_years,notes
+Bachelor,85500,27437,0,(Assumes median salary ~ avg of reported values)
+Master,95400,61667,6.5,(Break-even = debt ÷ (salary difference vs bachelor))

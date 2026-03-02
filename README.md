@@ -1,6 +1,5 @@
 # Is Graduate School Financially Worth It for Computer Science Majors?
 
-
 Essential Question
 Does earning a master’s degree in computer science significantly improve long-term financial outcomes compared to stopping at a bachelor’s degree?
 
@@ -82,5 +81,3 @@ What This Dataset Cannot Prove (Limits/Bias)
 - Does not reflect regional tech markets.
 - Does not account for unemployment risk.
 - Does not measure networking benefits.
-
-

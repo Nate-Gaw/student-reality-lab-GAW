@@ -1,0 +1,5 @@
+degree_level,major,avg_debt_usd,source
+Bachelor,Computer Science,23875,CollegeTuitionCompare Federal Loan Avg :contentReference[oaicite:4]{index=4}
+Bachelor,Computer Science,31000,Hakia CS Debt Estimate :contentReference[oaicite:5]{index=5}
+Master,Computer Science,40334,CollegeTuitionCompare Federal Loan Avg :contentReference[oaicite:6]{index=6}
+Master,Computer Science,83000,US Avg Master’s Debt Approx (Broad Estimate) :contentReference[oaicite:7]{index=7}
