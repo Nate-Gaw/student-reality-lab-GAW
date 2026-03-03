@@ -1,4 +1,4 @@
-"""Website screenshot and design analysis tool using Playwright and Gemini."""
+"""Website screenshot and design analysis tool using Playwright and OpenAI Vision."""
 import base64
 from pathlib import Path
 from datetime import datetime
@@ -11,11 +11,11 @@ except ImportError:
     print("Then run: playwright install")
     raise
 
-from google.genai import Client
-from config import GEMINI_API_KEY, SCREENSHOTS_DIR
+from openai import OpenAI
+from config import OPENAI_API_KEY, SCREENSHOTS_DIR
 
-# Configure Gemini API
-client = Client(api_key=GEMINI_API_KEY)
+# Configure OpenAI API
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 
 async def take_screenshot(url: str, full_page: bool = True) -> str:
@@ -55,23 +55,19 @@ async def take_screenshot(url: str, full_page: bool = True) -> str:
 
 def analyze_website_design(screenshot_path: str, analysis_prompt: str = None) -> str:
     """
-    Send a website screenshot to Gemini for design analysis.
+    Send a website screenshot to OpenAI GPT-4o for design analysis.
     
     Args:
         screenshot_path: Path to the screenshot image
         analysis_prompt: Custom analysis prompt (optional)
     
     Returns:
-        String containing Gemini's design feedback
+        String containing GPT-4o's design feedback
     """
     try:
         # Read and encode image
         with open(screenshot_path, "rb") as img_file:
             image_data = base64.standard_b64encode(img_file.read()).decode("utf-8")
-        
-        # Determine MIME type
-        file_ext = Path(screenshot_path).suffix.lower()
-        mime_type = "image/png" if file_ext == ".png" else "image/jpeg"
         
         # Prepare the message
         if analysis_prompt is None:
@@ -87,20 +83,21 @@ def analyze_website_design(screenshot_path: str, analysis_prompt: str = None) ->
 
 Please be specific and constructive in your feedback."""
         
-        # Create the prompt with image
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=[
+        # Create the request with image using GPT-4o
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
                 {
                     "role": "user",
-                    "parts": [
+                    "content": [
                         {
-                            "inline_data": {
-                                "mime_type": mime_type,
-                                "data": image_data
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/png;base64,{image_data}"
                             }
                         },
                         {
+                            "type": "text",
                             "text": analysis_prompt
                         }
                     ]
@@ -108,15 +105,24 @@ Please be specific and constructive in your feedback."""
             ]
         )
         
-        return response.text
+        return response.choices[0].message.content
         
     except Exception as e:
-        raise Exception(f"Website analysis failed: {str(e)}")
+        error_str = str(e).lower()
+        if "api_key" in error_str or "invalid" in error_str or "401" in error_str:
+            raise Exception(
+                f"❌ OpenAI API Error: Invalid or expired API key.\n"
+                f"Please verify your OPENAI_API_KEY in .env file.\n"
+                f"Get a valid key from: https://platform.openai.com/api-keys\n"
+                f"Details: {str(e)}"
+            )
+        else:
+            raise Exception(f"Website analysis failed: {str(e)}")
 
 
 async def screenshot_and_analyze(url: str, analysis_prompt: str = None) -> dict:
     """
-    Screenshot a website and get design feedback from Gemini (async wrapper).
+    Screenshot a website and get design feedback from GPT-4o (async wrapper).
     
     Args:
         url: Website URL to analyze
@@ -127,10 +133,14 @@ async def screenshot_and_analyze(url: str, analysis_prompt: str = None) -> dict:
     """
     try:
         # Take screenshot
+        print(f"📸 Taking screenshot of {url}...")
         screenshot_path = await take_screenshot(url)
+        print(f"✅ Screenshot saved to: {screenshot_path}")
         
-        # Analyze with Gemini
+        # Analyze with OpenAI GPT-4o
+        print(f"🤖 Sending to OpenAI GPT-4o for analysis...")
         feedback = analyze_website_design(screenshot_path, analysis_prompt)
+        print(f"✅ Analysis complete!")
         
         return {
             "url": url,

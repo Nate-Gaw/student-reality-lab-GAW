@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Swiss Neon Data Impact — Is Grad School Worth It?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%232DE2E6' width='100' height='100'/></svg>" />
+  <meta name="description" content="Interactive analysis: Is a CS Master degree worth it?" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- PapaParse for CSV parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script type="module" crossorigin src="/assets/index-DGAO3Dlz.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-QZAKHhPz.css">
+</head>
+<body>
+  <div class="grid-root">
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <h1 class="title">Is Grad School Worth It for CS Majors?</h1>
+          <p class="subtitle">Swiss clarity × Neon impact — Understand the real financial tradeoffs between Bachelor’s and Master’s paths.</p>
+          <div class="key-stats">
+            <div class="stat">
+              <div class="stat-value" id="lifetime-diff">—</div>
+              <div class="stat-label">Estimated Lifetime Earnings Diff</div>
+            </div>
+            <button id="start-explore" class="cta">Start Exploring</button>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="hero-card glass">
+            <canvas id="heroMiniChart" width="400" height="220"></canvas>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="cards" id="degree-cards">
+        <div class="card bachelor glass">
+          <h3>Bachelor Path</h3>
+          <div class="metric">Average Salary<br><strong id="b-salary">—</strong></div>
+          <div class="metric">Average Debt<br><strong id="b-debt">—</strong></div>
+          <div class="metric">Net ROI<br><strong id="b-roi">—</strong></div>
+        </div>
+        <div class="card master glass">
+          <h3>Master Path</h3>
+          <div class="metric">Average Salary<br><strong id="m-salary">—</strong></div>
+          <div class="metric">Average Debt<br><strong id="m-debt">—</strong></div>
+          <div class="metric">Net ROI<br><strong id="m-roi">—</strong></div>
+        </div>
+      </section>
+      <div style="text-align:center;margin:24px 0">
+        <button class="cta" id="compare-scenario">Compare with Your Scenario →</button>
+      </div>
+
+      <section class="charts-compact-wrapper">
+        <div class="charts-top grid-three">
+          <div class="chart-card-compact glass">
+            <h4>Average Salary</h4>
+            <canvas id="salaryBar" height="120"></canvas>
+          </div>
+          <div class="chart-card-compact glass">
+            <h4>Average Debt</h4>
+            <canvas id="debtArea" height="120"></canvas>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:center;padding:16px">  
+            <div style="background:rgba(45,226,230,0.1);border:1px solid rgba(45,226,230,0.2);border-radius:10px;padding:16px;text-align:center">
+              <div style="font-size:11px;color:#a5afb2;margin-bottom:8px">30-Year Advantage</div>
+              <div style="font-size:22px;font-weight:700;color:var(--green);font-family:JetBrains Mono" id="quick-advantage">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-bottom grid-three">
+          <div class="chart-card-compact glass">
+            <h4>Break-Even Timeline</h4>
+            <canvas id="breakEvenChart" height="200"></canvas>
+          </div>
+          <div class="chart-card-compact glass">
+            <h4>ROI vs Time</h4>
+            <canvas id="roiVsTimeChart" height="200"></canvas>
+          </div>
+          <div class="chart-card-compact glass">
+            <h4>Annual Advantage</h4>
+            <canvas id="annualAdvantageChart" height="200"></canvas>
+          </div>
+        </div>
+      </section>
+      <section class="story-note glass" aria-labelledby="story-heading">
+        <h3 id="story-heading">What to Notice</h3>
+        <p>
+          This view is designed as a compact proof machine for one claim: a Master’s degree can produce a long-run
+          financial advantage, but only when debt, salary growth, and repayment assumptions remain favorable. The
+          break-even chart shows when cumulative net earnings from the Master path catch and exceed the Bachelor path.
+          That crossing point is sensitive: higher debt or interest can shift it years later, and in some scenarios the
+          crossing never happens inside the 30-year window. The annual advantage chart adds another layer by showing
+          how much the Master path leads or lags in each year after graduation. Use the sliders to test realistic
+          personal conditions—not best-case assumptions. For example, increasing taxes and cost-of-living often reduces
+          purchasing-power gains even when headline salary looks strong. The goal is not to force one answer, but to
+          reveal the decision boundary where graduate school stops being a clear financial win and becomes a tradeoff
+          requiring non-financial justification.
+        </p>
+        <p class="story-annotation" id="story-annotation">Annotation: Waiting for model update...</p>
+      </section>
+      <div class="chart-controls glass">
+        <label><input id="chart-show-points" type="checkbox"> Show chart data points</label>
+        <label>Annual Advantage Chart:
+          <select id="annual-chart-type" class="select-input">
+            <option value="bar" selected>Bar</option>
+            <option value="line">Line</option>
+          </select>
+        </label>
+      </div>
+      <section class="roi-panel glass" id="roi-panel">
+        <h2>Adjust Your Scenario</h2>
+        <p style="font-size:14px;color:#a5afb2;margin-bottom:16px">Modify parameters to see real-time impact on your financial outcome</p>
+        <div class="roi-controls-compact">
+          <label>
+            <span>Bachelor's Total Debt:</span>
+            <div class="slider-container">
+              <input id="bachelor-debt" type="range" min="0" max="100000" step="500" value="27437">
+              <input id="bachelor-debt-num" type="number" min="0" max="100000" step="500" value="27437">
+              <span class="val-display" id="bachelor-debt-val">$27,437</span>
+            </div>
+          </label>
+          <label>
+            <span>Master's Total Debt:</span>
+            <div class="slider-container">
+              <input id="master-debt" type="range" min="0" max="150000" step="500" value="61667">
+              <input id="master-debt-num" type="number" min="0" max="150000" step="500" value="61667">
+              <span class="val-display" id="master-debt-val">$61,667</span>
+            </div>
+          </label>
+          <label>
+            <span>Loan Repayment Period (years):</span>
+            <div class="slider-container">
+              <input id="repayment-period" type="range" min="1" max="30" step="1" value="10">
+              <input id="repayment-period-num" type="number" min="1" max="30" step="1" value="10">
+              <span class="val-display" id="repayment-period-val">10 years</span>
+            </div>
+          </label>
+          <label>
+            <span>Loan Interest Rate (%):</span>
+            <div class="slider-container">
+              <input id="interest" type="range" min="0" max="12" step="0.1" value="5">
+              <input id="interest-num" type="number" min="0" max="12" step="0.1" value="5">
+              <span class="val-display" id="interest-val">5%</span>
+            </div>
+          </label>
+          <label>
+            <span>Bachelor Starting Salary:</span>
+            <div class="slider-container">
+              <input id="bachelor-salary" type="range" min="20000" max="250000" step="1000" value="85500">
+              <input id="bachelor-salary-num" type="number" min="20000" max="250000" step="1000" value="85500">
+              <span class="val-display" id="bachelor-salary-val">$85,500</span>
+            </div>
+          </label>
+          <label>
+            <span>Master Starting Salary:</span>
+            <div class="slider-container">
+              <input id="master-salary" type="range" min="20000" max="250000" step="1000" value="95400">
+              <input id="master-salary-num" type="number" min="20000" max="250000" step="1000" value="95400">
+              <span class="val-display" id="master-salary-val">$95,400</span>
+            </div>
+          </label>
+          <label>
+            <span>Annual Salary Growth (%):</span>
+            <div class="slider-container">
+              <input id="growth" type="range" min="0" max="10" step="0.1" value="3">
+              <input id="growth-num" type="number" min="0" max="10" step="0.1" value="3">
+              <span class="val-display" id="growth-val">3%</span>
+            </div>
+          </label>
+          <label>
+            <span>Estimated Tax Rate (%):</span>
+            <div class="slider-container">
+              <input id="tax-rate" type="range" min="0" max="45" step="1" value="24">
+              <input id="tax-rate-num" type="number" min="0" max="45" step="1" value="24">
+              <span class="val-display" id="tax-rate-val">24%</span>
+            </div>
+          </label>
+          <label>
+            <span>Location (Cost Index):</span>
+            <div class="slider-container">
+              <select id="location-tier" class="select-input">
+                <option value="0.88">Low Cost Region</option>
+                <option value="1.00" selected>Average U.S.</option>
+                <option value="1.12">High Cost Metro</option>
+                <option value="1.25">Very High Cost Metro</option>
+              </select>
+              <span class="val-display" id="location-tier-val">x1.00</span>
+            </div>
+          </label>
+        </div>
+
+          <div class="roi-output-compact" id="roi-output">
+            <div class="roi-metrics-grid">
+              <div class="roi-metric-item">
+                <span>Break-even Year</span>
+                <strong id="roi-break">—</strong>
+              </div>
+              <div class="roi-metric-item">
+                <span>Bachelor Monthly</span>
+                <strong id="bachelor-monthly">—</strong>
+              </div>
+              <div class="roi-metric-item">
+                <span>Master Monthly</span>
+                <strong id="master-monthly">—</strong>
+              </div>
+              <div class="roi-metric-item">
+                <span>30Y Advantage</span>
+                <strong id="roi-profit">—</strong>
+              </div>
+              <div class="roi-metric-item">
+                <span>Bachelor Total</span>
+                <strong id="roi-bachelor-total">—</strong>
+              </div>
+              <div class="roi-metric-item">
+                <span>Master Total</span>
+                <strong id="roi-master-total">—</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-panel glass">
+            <h3>Actionable Summary</h3>
+            <ul>
+              <li id="summary-15y">After 15 years: —</li>
+              <li id="summary-breakeven">Break-even outlook: —</li>
+              <li id="summary-retirement">Projected additional retirement value: —</li>
+            </ul>
+          </div>
+
+          <div class="qualitative-panel glass">
+            <h3>Beyond the Numbers</h3>
+            <div class="qualitative-grid">
+              <label>Work-life balance priority
+                <select id="q-worklife" class="select-input">
+                  <option value="1">Low</option>
+                  <option value="2">Moderate</option>
+                  <option value="3" selected>High</option>
+                </select>
+              </label>
+              <label>Career acceleration priority
+                <select id="q-career" class="select-input">
+                  <option value="1">Low</option>
+                  <option value="2" selected>Moderate</option>
+                  <option value="3">High</option>
+                </select>
+              </label>
+              <label>Debt risk tolerance
+                <select id="q-debt" class="select-input">
+                  <option value="1">Low</option>
+                  <option value="2" selected>Moderate</option>
+                  <option value="3">High</option>
+                </select>
+              </label>
+            </div>
+            <p id="qualitative-insight" class="qualitative-insight">Set your preferences to receive a personalized non-financial recommendation.</p>
+          </div>
+
+          <div style="margin-top:24px;padding:16px;background:rgba(45,226,230,0.08);border-radius:8px;border-left:3px solid var(--blue)">
+            <p style="margin:0;font-size:13px;color:#a5afb2"><strong style="color:#2DE2E6">💡 Tip:</strong> This calculator shows raw financial outcomes. Consider non-financial factors like career fulfillment, job market demand, and personal goals when making your decision.</p>
+          </div>
+      </section>
+
+      <!-- Two Futures removed to simplify visuals and focus on interactive ROI -->
+
+      <section class="transparency glass small-panel">
+        <h3>Model Assumptions</h3>
+        <ul>
+          <li><strong>Loan Repayment:</strong> Standard amortization schedule over the specified period</li>
+          <li><strong>Monthly Payment:</strong> Fixed payment calculated from principal, rate, and term</li>
+          <li><strong>Salary Growth:</strong> Constant annual percentage increase for both paths after graduation</li>
+          <li><strong>Master's Salary Premium:</strong> Master graduates start at a higher salary immediately after graduation</li>
+          <li><strong>Debt Impact:</strong> Total debt is deducted from cumulative earnings over time</li>
+          <li><strong>Break-even:</strong> First year where Master's cumulative net earnings exceed Bachelor's</li>
+          <li><strong>No Career Gaps:</strong> Assumes continuous employment and salary growth</li>
+          <li><strong>Taxes:</strong> Uses your estimated tax rate as a simple net-income approximation</li>
+          <li><strong>Cost of Living:</strong> Uses a location cost index multiplier to normalize purchasing power</li>
+          <li><strong>ROI Method:</strong> Net earnings = (Salary − Taxes) / Cost Index − Debt Payment</li>
+        </ul>
+      </section>
+
+      <section class="transparency glass small-panel">
+        <h3>What This Data Does Not Show</h3>
+        <ul>
+          <li>Job satisfaction and career fulfillment</li>
+          <li>Burnout and work-life balance</li>
+          <li>Employer-paid tuition and education assistance</li>
+          <li>Promotions and stock compensation</li>
+          <li>Regional variation in salaries and cost of living</li>
+          <li>Non-software engineering CS careers</li>
+        </ul>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div style="margin-bottom:24px">
+        <strong style="color:#e0e4e7">Swiss Neon Data Impact</strong> — Built for exploration • © 2026
+      </div>
+      <h3 style="margin-top:0">Data Sources</h3>
+      <div class="footer-sources" id="footer-sources">
+        <ol id="sources-list"></ol>
+      </div>
+    </footer>
+  </div>
+
+</body>
+</html>

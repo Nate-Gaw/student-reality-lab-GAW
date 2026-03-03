@@ -23,7 +23,7 @@ A modular Python toolkit for AI-powered tasks including web search, image genera
 
 ### 3. 📸 Website Screenshot & Design Analysis
 - Takes screenshots of any website using Playwright
-- Automatically sends screenshots to Google Gemini for AI analysis
+- Automatically sends screenshots to OpenAI's GPT-4o for AI analysis
 - Provides detailed feedback on:
   - Visual design quality
   - User experience
@@ -31,14 +31,13 @@ A modular Python toolkit for AI-powered tasks including web search, image genera
   - Modern design standards
   - Specific improvement suggestions
 
-**Cost:** Free (uses Gemini API which has free tier)
+**Cost:** ~$0.01-0.03 per analysis (uses GPT-4o vision API)
 
 ## 🚀 Quick Setup
 
 ### Prerequisites
 - Python 3.8+
 - OpenAI API key (OpenAI account)
-- Google Gemini API key (Google Cloud account)
 
 ### Installation
 
@@ -46,7 +45,6 @@ A modular Python toolkit for AI-powered tasks including web search, image genera
    - Verify `.env` file exists in the project root with:
      ```
      OPENAI_API_KEY=your_key_here
-     GEMINI_API_KEY=your_key_here
      ```
 
 2. **Run setup script**
@@ -141,7 +139,7 @@ The toolkit is designed to be easily extensible. To add a new tool:
 
 - **Web Search:** ~$0.01-0.05 per search (GPT-4 API)
 - **Image Generation:** $0.04-0.20 per image (HD costs more)
-- **Website Analysis:** Free! (Gemini has generous free tier)
+- **Website Analysis:** ~$0.01-0.03 per analysis (GPT-4o vision)
 
 ## 🔑 API Keys Setup
 
@@ -151,22 +149,6 @@ The toolkit is designed to be easily extensible. To add a new tool:
 3. Navigate to API Keys section
 4. Create new secret key
 5. Add to `.env` as `OPENAI_API_KEY=sk-...`
-
-### Google Gemini API Key
-1. Go to [Google AI Studio](https://aistudio.google.com)
-2. Click "Get API Key"
-3. Create new API key
-4. Add to `.env` as `GEMINI_API_KEY=AIza...`
-
-### Brave Search API Key (Optional - for Real Web Search)
-*Note: Web search currently uses mock results by default. For real web search:*
-
-1. Go to [Brave Search API](https://api.search.brave.com)
-2. Sign up for free tier
-3. Get your API key
-4. Add to `.env` as `BRAVE_API_KEY=your_key_here`
-
-Without this, web search will still work but will provide placeholder results that ChatGPT will analyze philosophically.
 
 ## 🐛 Troubleshooting
 

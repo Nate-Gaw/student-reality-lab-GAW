@@ -1,0 +1,25 @@
+{
+  "contractVersion": "1.0.0",
+  "generatedAt": "2026-03-03T22:55:50.899Z",
+  "units": {
+    "currency": "USD",
+    "timeframe": "annual"
+  },
+  "definitions": {
+    "breakEven": "First year where Master cumulative net earnings are greater than or equal to Bachelor cumulative net earnings.",
+    "roi30Year": "Difference between Master and Bachelor cumulative net earnings at year 30.",
+    "debt": "Total education debt at graduation used as principal for amortized repayment."
+  },
+  "metrics": {
+    "bachelorSalary": 80236,
+    "masterSalary": 95680,
+    "bachelorDebt": 29300,
+    "masterDebt": 77300,
+    "sampleCategory": "General"
+  },
+  "sources": [
+    "https://educationdata.org/student-loan-debt-by-major",
+    "https://github.com/YujiShen/anly-500-project/blob/master/degrees-that-pay-back.csv",
+    "https://collegescorecard.ed.gov/data/"
+  ]
+}
