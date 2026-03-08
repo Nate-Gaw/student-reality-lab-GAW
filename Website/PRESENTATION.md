@@ -1,5 +1,8 @@
 # STAR Presentation Script
 
+## Video Demo
+https://www.youtube.com/watch?v=-j1PwYwVh4o
+
 ## S — Situation (20–30 sec)
 Many CS students are being told that a Master’s degree is always worth it, but tuition costs and debt levels have changed faster than wages. Students need a clearer, data-backed way to compare the Bachelor and Master paths under realistic assumptions.
 
