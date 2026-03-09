@@ -4,7 +4,7 @@
 https://www.youtube.com/watch?v=-j1PwYwVh4o
 
 ## S — Situation (20–30 sec)
-Many CS students are being told that a Master’s degree is always worth it, but tuition costs and debt levels have changed faster than wages. Students need a clearer, data-backed way to compare the Bachelor and Master paths under realistic assumptions.
+Many CS students are being told that a Master’s degree is always worth it, but tuition costs and debt levels have changed faster than wages. For instance, my father made all of my siblings get masters degree. While it was worth it for my father to get one, for some of my siblings they disagree. Students need a clearer, data-backed way to compare the Bachelor and Master paths under realistic assumptions.
 
 ## T — Task (10–15 sec)
 I answered one question: **when does a Master’s degree break even financially for CS students?**
