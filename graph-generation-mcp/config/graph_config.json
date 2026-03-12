@@ -1,0 +1,45 @@
+{
+  "default_style": {
+    "template": "plotly_white",
+    "title_font_size": 20,
+    "axis_font_size": 12,
+    "show_legend": true,
+    "show_grid": true,
+    "show_hover": true
+  },
+  "color_schemes": {
+    "default": "plotly",
+    "professional": "viridis",
+    "colorful": "rainbow",
+    "monochrome": "blues"
+  },
+  "graph_defaults": {
+    "bar": {
+      "orientation": "v",
+      "show_values": true,
+      "template": "plotly_white"
+    },
+    "line": {
+      "mode": "lines+markers",
+      "template": "plotly_white"
+    },
+    "scatter": {
+      "marker_size": 8,
+      "template": "plotly_white"
+    },
+    "pie": {
+      "textinfo": "label+percent",
+      "template": "plotly_white"
+    },
+    "histogram": {
+      "nbins": 30,
+      "template": "plotly_white"
+    }
+  },
+  "export": {
+    "default_format": "png",
+    "default_width": 1200,
+    "default_height": 800,
+    "dpi": 300
+  }
+}

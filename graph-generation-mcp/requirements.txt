@@ -1,0 +1,20 @@
+# Graph Generation MCP
+plotly>=5.18.0
+pandas>=2.1.0
+numpy>=1.24.0
+
+# MCP Server
+mcp>=0.9.0
+
+# Data Processing
+openpyxl>=3.1.0  # Excel support
+xlrd>=2.0.0      # Excel support
+
+# Optional: Enhanced features
+scipy>=1.11.0    # Statistical functions
+seaborn>=0.13.0  # Additional styling
+
+# Utilities
+python-dotenv>=1.0.0
+pydantic>=2.5.0
+kaleido>=0.2.1   # Static image export

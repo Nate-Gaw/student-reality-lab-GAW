@@ -1,13 +1,56 @@
 # Is Graduate School Financially Worth It for Computer Science Majors?
 
-Essential Question
-Does earning a master’s degree in computer science significantly improve long-term financial outcomes compared to stopping at a bachelor’s degree?
+## Essential Question
+Does earning a master's degree in computer science significantly improve long-term financial outcomes compared to stopping at a bachelor's degree?
 
-Claim (Hypothesis)
-CS graduates with a master’s degree earn enough additional income over time to justify the extra student loan debt.
+## Claim (Hypothesis)
+CS graduates with a master's degree earn enough additional income over time to justify the extra student loan debt.
 
-Audience
+## Audience
 Computer science students, prospective graduate students, academic advisors, and parents.
+
+## Project Components
+
+### 1. Interactive Financial Advisor (Website/)
+ChatGPT-style interface powered by OpenAI that calculates break-even analysis and 30-year ROI projections for CS degrees.
+
+**Features**:
+- Real-time AI conversation about degree ROI
+- Break-even year calculator
+- 30-year financial advantage projections
+- Editable key notes system
+- Clean bento-style minimal UI
+
+[→ Website README](Website/README.md)
+
+### 2. University Cost Data MCP Server (university-cost-mcp/)
+Model Context Protocol (MCP) tool that aggregates global university cost data from government APIs, datasets, and web scraping.
+
+**Features**:
+- Query costs for 100+ universities worldwide
+- Compare costs across multiple institutions
+- Real-time data acquisition and caching
+- Integration with Claude Desktop
+- Support for bachelor's, master's, and doctoral programs
+
+[→ MCP README](university-cost-mcp/README.md) | [→ Architecture](university-cost-mcp/ARCHITECTURE.md) | [→ Integration Guide](university-cost-mcp/INTEGRATION.md)
+
+### 3. Graph Generation MCP Server (graph-generation-mcp/)
+Model Context Protocol (MCP) tool for dynamic, interactive data visualization using Plotly.
+
+**Features**:
+- Intelligent graph type auto-detection
+- 7 chart types: bar, line, scatter, pie, histogram, box, heatmap
+- Interactive visualizations (hover, zoom, export)
+- Multiple data input formats (JSON, CSV, DataFrame)
+- Integration with Website and University Cost MCP
+
+[→ Graph README](graph-generation-mcp/README.md) | [→ Quick Start](graph-generation-mcp/QUICKSTART.md) | [→ Integration Guide](graph-generation-mcp/INTEGRATION.md)
+
+### 4. Research Archive (reference/Website/)
+Original data visualization website with Chart.js showing salary and debt distributions (preserved as reference).
+
+---
 
 STAR Draft
 

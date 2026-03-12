@@ -42,7 +42,7 @@ A modular Python toolkit for AI-powered tasks including web search, image genera
 ### Installation
 
 1. **Set up environment variables**
-   - Verify `.env` file exists in the project root with:
+   - Verify `student-reality-lab-GAW/.env` exists with:
      ```
      OPENAI_API_KEY=your_key_here
      ```

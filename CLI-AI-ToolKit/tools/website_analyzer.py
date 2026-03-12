@@ -112,7 +112,7 @@ Please be specific and constructive in your feedback."""
         if "api_key" in error_str or "invalid" in error_str or "401" in error_str:
             raise Exception(
                 f"❌ OpenAI API Error: Invalid or expired API key.\n"
-                f"Please verify your OPENAI_API_KEY in .env file.\n"
+                f"Please verify your OPENAI_API_KEY in student-reality-lab-GAW/.env.\n"
                 f"Get a valid key from: https://platform.openai.com/api-keys\n"
                 f"Details: {str(e)}"
             )

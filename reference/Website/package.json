@@ -1,0 +1,17 @@
+{
+  "name": "swiss-neon-data-impact-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:data": "node scripts/build-processed.mjs",
+    "predev": "npm run build:data",
+    "dev": "vite",
+    "build": "npm run build:data && vite build",
+    "preview": "vite preview",
+    "test:finance": "node --input-type=module -e \"import('./js/tests/finance.test.js')\""
+  },
+  "devDependencies": {
+    "vite": "^6.2.2"
+  }
+}

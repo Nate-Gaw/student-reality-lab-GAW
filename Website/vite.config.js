@@ -1,8 +1,6 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  server: {
-    port: 8000,
-    strictPort: true
-  }
+  // Read VITE_* values from student-reality-lab-GAW/.env
+  envDir: ".."
 });

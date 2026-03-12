@@ -1,0 +1,81 @@
+{
+  "data_sources": [
+    {
+      "source_name": "US College Scorecard",
+      "source_type": "api",
+      "base_url": "https://api.data.gov/ed/collegescorecard/v1",
+      "requires_auth": false,
+      "countries_covered": ["United States"],
+      "priority": 1,
+      "reliability_score": 0.95,
+      "description": "Official US Department of Education database"
+    },
+    {
+      "source_name": "UK HESA",
+      "source_type": "api",
+      "base_url": "https://www.hesa.ac.uk/data-and-analysis",
+      "requires_auth": true,
+      "countries_covered": ["United Kingdom"],
+      "priority": 1,
+      "reliability_score": 0.95,
+      "description": "Higher Education Statistics Agency UK"
+    },
+    {
+      "source_name": "Universities Canada",
+      "source_type": "dataset",
+      "base_url": "https://www.univcan.ca",
+      "requires_auth": false,
+      "countries_covered": ["Canada"],
+      "priority": 2,
+      "reliability_score": 0.85,
+      "description": "Canadian university association data"
+    },
+    {
+      "source_name": "Times Higher Education",
+      "source_type": "api",
+      "base_url": "https://www.timeshighereducation.com/world-university-rankings",
+      "requires_auth": true,
+      "countries_covered": ["global"],
+      "priority": 2,
+      "reliability_score": 0.85,
+      "description": "Global university rankings and data"
+    },
+    {
+      "source_name": "QS World Rankings",
+      "source_type": "api",
+      "base_url": "https://www.topuniversities.com/university-rankings",
+      "requires_auth": true,
+      "countries_covered": ["global"],
+      "priority": 2,
+      "reliability_score": 0.85,
+      "description": "QS World University Rankings data"
+    },
+    {
+      "source_name": "Web Scraper",
+      "source_type": "scraper",
+      "requires_auth": false,
+      "countries_covered": ["global"],
+      "priority": 3,
+      "reliability_score": 0.65,
+      "description": "Fallback web scraping from official university websites"
+    }
+  ],
+  "rate_limits": {
+    "us_college_scorecard": 1000,
+    "default_api": 100,
+    "web_scraper": 10
+  },
+  "cache_ttl_days": 90,
+  "currencies": {
+    "USD": "United States Dollar",
+    "EUR": "Euro",
+    "GBP": "British Pound",
+    "CAD": "Canadian Dollar",
+    "AUD": "Australian Dollar",
+    "JPY": "Japanese Yen",
+    "CNY": "Chinese Yuan",
+    "INR": "Indian Rupee",
+    "CHF": "Swiss Franc",
+    "SGD": "Singapore Dollar"
+  }
+}

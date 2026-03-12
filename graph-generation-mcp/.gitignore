@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Exports
+exports/
+*.png
+*.jpg
+*.pdf
+*.html
+
+# Testing
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db

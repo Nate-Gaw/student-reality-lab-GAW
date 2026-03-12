@@ -1,888 +1,572 @@
-// main.js — Complete Financial ROI Model with Loan Amortization
-// Implements the full specification with proper salary growth, loan calculations, and visualization
+const ADVISOR_API_URL = import.meta.env.VITE_ADVISOR_API_URL || "http://127.0.0.1:5055";
 
-// Runtime holder for latest computed stats
-let CURRENT_STATS = null;
-
-// Default statistics (from payback_analysis.csv)
-function getDefaultStats() {
-  return {
-    bachelor: {
-      avgSalary: 85500,
-      avgDebt: 27437,
-      roi: 2565000,
-      count: 0
-    },
-    master: {
-      avgSalary: 95400,
-      avgDebt: 61667,
-      roi: 2903333,
-      count: 0
-    }
-  };
+function validateAdvisorUrl(url) {
+  // Prevent accidental placement of API keys in the advisor URL config.
+  if (!url || !/^https?:\/\//i.test(url)) {
+    throw new Error(
+      `Invalid VITE_ADVISOR_API_URL: "${url}". Set it to a bridge URL like http://127.0.0.1:5055`
+    );
+  }
 }
 
-const LOCATION_MULTIPLIERS = {
-  low: 0.88,
-  avg: 1.0,
-  high: 1.12,
-  veryhigh: 1.25
+const form = document.getElementById("prompt-form");
+const input = document.getElementById("prompt-input");
+const chatLog = document.getElementById("chat-log");
+const sendBtn = document.getElementById("send-btn");
+const keyNotesList = document.getElementById("key-notes-list");
+const noteForm = document.getElementById("note-form");
+const noteInput = document.getElementById("note-input");
+const infoBachelor = document.getElementById("info-bachelor");
+const infoMaster = document.getElementById("info-master");
+const lensBreakEven = document.getElementById("lens-break-even");
+
+const noteKeySet = new Set();
+
+function autoResizePromptField() {
+  const styles = window.getComputedStyle(input);
+  const lineHeight = Number.parseFloat(styles.lineHeight) || 22;
+  const paddingTop = Number.parseFloat(styles.paddingTop) || 0;
+  const paddingBottom = Number.parseFloat(styles.paddingBottom) || 0;
+  const maxHeight = (lineHeight * 4) + paddingTop + paddingBottom;
+
+  input.style.height = "auto";
+  input.style.height = `${Math.min(input.scrollHeight, maxHeight)}px`;
+}
+
+const BASELINE_SCENARIO = {
+  bachelorDebt: 27437,
+  masterDebt: 61667,
+  repaymentYears: 10,
+  interestRate: 5,
+  bachelorSalary: 85500,
+  masterSalary: 95400,
+  growthRate: 3,
+  taxRate: 24,
+  costIndex: 1
 };
 
-function getChartPointRadius() {
-  const toggle = document.getElementById('chart-show-points');
-  return toggle && toggle.checked ? 3 : 0;
+function addMessage(role, content) {
+  const node = document.createElement("article");
+  node.className = `message ${role}`;
+  node.textContent = content;
+  chatLog.appendChild(node);
+  chatLog.scrollTop = chatLog.scrollHeight;
 }
 
-function getAnnualChartType() {
-  const selector = document.getElementById('annual-chart-type');
-  return selector ? selector.value : 'bar';
+function addGraphMessage(graph) {
+  if (!graph?.html) return;
+
+  const wrapper = document.createElement("article");
+  wrapper.className = "message assistant message-graph";
+
+  const title = document.createElement("p");
+  title.className = "graph-title";
+  title.textContent = graph.title || "Graph MCP Visualization";
+
+  const frame = document.createElement("iframe");
+  frame.className = "graph-frame";
+  frame.setAttribute("title", graph.title || "Graph output");
+  frame.setAttribute("loading", "lazy");
+  frame.srcdoc = graph.html;
+
+  wrapper.appendChild(title);
+  wrapper.appendChild(frame);
+  chatLog.appendChild(wrapper);
+  chatLog.scrollTop = chatLog.scrollHeight;
 }
 
-/**
- * Calculate monthly loan payment using standard amortization formula
- * Payment = P * (r(1+r)^n) / ((1+r)^n - 1)
- * where P = principal, r = monthly rate, n = number of payments
- */
 function calculateMonthlyPayment(principal, annualRate, yearsToRepay) {
   if (principal <= 0 || yearsToRepay <= 0) return 0;
-  
+
   const monthlyRate = annualRate / 100 / 12;
   const numPayments = yearsToRepay * 12;
-  
+
   if (monthlyRate === 0) {
     return principal / numPayments;
   }
-  
+
   const numerator = monthlyRate * Math.pow(1 + monthlyRate, numPayments);
   const denominator = Math.pow(1 + monthlyRate, numPayments) - 1;
   return principal * (numerator / denominator);
 }
 
-/**
- * Generate full 30-year financial projection for one degree path
- * Accounts for:
- * - Salary growth at constant annual percentage
- * - Loan repayment during the first N years
- * - Cumulative net earnings (salary - monthly payments)
- */
-function projectEarnings(startSalary, growthRate, yearsToProject = 30, totalDebt = 0, annualRate = 5, repaymentYears = 10, extra = {}) {
+function projectEarnings({
+  startSalary,
+  growthRate,
+  yearsToProject = 30,
+  totalDebt = 0,
+  annualRate = 5,
+  repaymentYears = 10,
+  taxRate = 0,
+  costIndex = 1
+}) {
   const projection = [];
   let currentSalary = startSalary;
   let cumulativeEarnings = 0;
+
   const monthlyPayment = calculateMonthlyPayment(totalDebt, annualRate, repaymentYears);
   const annualPayment = monthlyPayment * 12;
-  const taxRate = Number(extra.taxRate || 0);
-  const costIndex = Number(extra.costIndex || 1);
-  
-  for (let year = 0; year <= yearsToProject; year++) {
-    // Salary grows each year (after year 0)
+
+  for (let year = 0; year <= yearsToProject; year += 1) {
     if (year > 0) {
-      currentSalary = currentSalary * (1 + growthRate / 100);
+      currentSalary *= 1 + growthRate / 100;
     }
-    
-    // Determine annual payment (zero after repayment period)
+
     const isRepayingDebt = year > 0 && year <= repaymentYears;
     const paymentThisYear = isRepayingDebt ? annualPayment : 0;
-    
-    const grossCompensation = currentSalary;
-    const taxAmount = grossCompensation * (taxRate / 100);
-    const afterTaxIncome = grossCompensation - taxAmount;
+
+    const taxAmount = currentSalary * (taxRate / 100);
+    const afterTaxIncome = currentSalary - taxAmount;
     const costAdjustedIncome = costIndex > 0 ? afterTaxIncome / costIndex : afterTaxIncome;
     const netEarningsThisYear = costAdjustedIncome - paymentThisYear;
+
     cumulativeEarnings += netEarningsThisYear;
-    
+
     projection.push({
-      year: year,
-      salary: Math.round(currentSalary),
-      grossCompensation: Math.round(grossCompensation),
-      monthlyPayment: Math.round(monthlyPayment),
-      annualPayment: Math.round(annualPayment),
-      taxAmount: Math.round(taxAmount),
-      costAdjustedIncome: Math.round(costAdjustedIncome),
+      year,
       netEarningsThisYear: Math.round(netEarningsThisYear),
-      cumulativeNet: Math.round(cumulativeEarnings),
-      isRepayingDebt: isRepayingDebt
+      cumulativeNet: Math.round(cumulativeEarnings)
     });
   }
-  
+
   return projection;
 }
 
-// UI chart instances
-let breakChart, salaryBar, debtArea, heroMini, roiVsTimeChart, annualAdvantageChart;
-
-function createCharts(cleaned, datasets, stats) {
-  console.log('🎨 Creating charts with stats:', stats);
-  const years = Array.from({length:31}, (_,i)=>i);
-  
-  // Compute fallback values if needed
-  const computeFallback = (level, field) => {
-    try {
-      const rows = cleaned.filter(r => r.degree_level && r.degree_level.includes(level) && r[field] !== null);
-      if (!rows.length) return null;
-      const vals = rows.map(r => Number(r[field])).filter(v => !Number.isNaN(v));
-      if (!vals.length) return null;
-      return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
-    } catch(e){ return null; }
-  };
-
-  // Get values (prefer stats, then fallback)
-  const bSalary = stats.bachelor.avgSalary || computeFallback('bachelor','avg_salary') || 85500;
-  const mSalary = stats.master.avgSalary || computeFallback('master','avg_salary') || 95400;
-  const bDebt = stats.bachelor.avgDebt || computeFallback('bachelor','avg_grad_debt') || 27437;
-  const mDebt = stats.master.avgDebt || computeFallback('master','avg_grad_debt') || 61667;
-
-  console.log('📊 Chart defaults - Bachelor:', {bSalary, bDebt}, 'Master:', {mSalary, mDebt});
-
-  // Generate initial projections with defaults (3% growth, 5% interest, 10-year repayment)
-  const bProj = projectEarnings(bSalary, 3, 30, bDebt, 5, 10).map(p=>p.cumulativeNet);
-  const mProj = projectEarnings(mSalary, 3, 30, mDebt, 5, 10).map(p=>p.cumulativeNet);
-
-  // Hero mini chart (cumulative earnings over time)
-  const heroEl = document.getElementById('heroMiniChart');
-  if (heroEl && heroEl.getContext) {
-    const heroCtx = heroEl.getContext('2d');
-    try { if (heroMini) heroMini.destroy(); } catch(e){}
-    heroMini = new Chart(heroCtx, {
-      type:'line',
-      data:{
-        labels:years,
-        datasets:[
-          {label:'Bachelor',data:bProj,borderColor:'#2DE2E6',backgroundColor:'rgba(45,226,230,0.08)',tension:0.3,pointRadius:0,borderWidth:2},
-          {label:'Master',data:mProj,borderColor:'#FF2A6D',backgroundColor:'rgba(255,42,109,0.06)',tension:0.3,pointRadius:0,borderWidth:2}
-        ]
-      },
-      options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        elements:{line:{borderWidth:2}},
-        scales:{y:{display:false},x:{display:false}}
-      }
-    });
-  }
-
-  // Break-even chart (cumulative earnings with intersection highlighting)
-  const breakEl = document.getElementById('breakEvenChart');
-  if (breakEl && breakEl.getContext) {
-    const ctx = breakEl.getContext('2d');
-    if (breakChart) try { breakChart.destroy(); } catch(e){}
-    
-    // Find break-even year
-    let breakYear = '—';
-    for (let i=0; i<years.length; i++){
-      if (mProj[i] !== undefined && bProj[i] !== undefined && mProj[i] >= bProj[i]){ 
-        breakYear = i; 
-        break; 
-      }
+function computeBreakEvenYear(bachelorProjection, masterProjection) {
+  const years = Math.min(bachelorProjection.length, masterProjection.length);
+  for (let i = 0; i < years; i += 1) {
+    if (masterProjection[i].cumulativeNet >= bachelorProjection[i].cumulativeNet) {
+      return i;
     }
-    
-    breakChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: years,
-        datasets: [
-          {
-            label: 'Bachelor Path (Cumulative Net Earnings)',
-            data: bProj,
-            borderColor: '#2DE2E6',
-            backgroundColor: 'rgba(45,226,230,0.06)',
-            tension: 0.2,
-            pointRadius: 0,
-            borderWidth: 3,
-            pointHoverRadius: 6
-          },
-          {
-            label: 'Master Path (Cumulative Net Earnings)',
-            data: mProj,
-            borderColor: '#FF2A6D',
-            backgroundColor: 'rgba(255,42,109,0.06)',
-            tension: 0.2,
-            pointRadius: 0,
-            borderWidth: 3,
-            pointHoverRadius: 6
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: 'index', intersect: false },
-        plugins: { 
-          legend: { 
-            position: 'top',
-            labels: {color:'#e0e4e7', font: {size: 13, weight: '600'}, padding: 16}
-          },
-          tooltip: {
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            titleColor: '#fff',
-            titleFont: {size: 14, weight: '600'},
-            bodyColor: '#e0e4e7',
-            bodyFont: {size: 13},
-            borderColor: 'rgba(45,226,230,0.3)',
-            borderWidth: 1,
-            padding: 10,
-            callbacks:{
-              label:function(ctx){return ctx.dataset.label+': $'+ctx.parsed.y.toLocaleString();}
-            }
-          }
-        },
-        scales: {
-          y: { 
-            title: { display: true, text: 'Cumulative Net Earnings (USD)', color:'#a5afb2', font: {size: 13, weight: '600'} },
-            ticks: {callback:function(v){return '$'+(v/1000|0)+'k';}, color: '#a5afb2', font: {size: 12}},
-            grid: {color:'rgba(255,255,255,0.05)'},
-            beginAtZero: true
-          },
-          x: { 
-            title: { display: true, text: 'Years After Graduation', color:'#a5afb2', font: {size: 13, weight: '600'} },
-            grid: {color:'rgba(255,255,255,0.05)'},
-            ticks: {color: '#a5afb2', font: {size: 12}}
-          }
-        }
-      }
-    });
-
-    const breakYearEl = document.getElementById('break-year'); 
-    if (breakYearEl) breakYearEl.innerText = breakYear;
   }
-
-  // Salary bar chart
-  const salaryEl = document.getElementById('salaryBar');
-  if (salaryEl && salaryEl.getContext) {
-    const sctx = salaryEl.getContext('2d');
-    if (salaryBar) try{ salaryBar.destroy(); } catch(e){}
-    salaryBar = new Chart(sctx, {
-      type:'bar',
-      data:{
-        labels:['Bachelor','Master'],
-        datasets:[{label:'Starting Salary (USD)',data:[bSalary,mSalary],backgroundColor:['rgba(45,226,230,0.9)','rgba(255,42,109,0.9)'],borderColor:['#2DE2E6','#FF2A6D'],borderWidth:1}]
-      },
-      options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        indexAxis: 'y',
-        plugins:{
-          legend:{position:'top', labels: {font: {size: 12}, color: '#e0e4e7', padding: 12}},
-          tooltip:{backgroundColor: 'rgba(0,0,0,0.8)', titleFont: {size: 13}, bodyFont: {size: 12}, borderColor: 'rgba(45,226,230,0.3)', borderWidth: 1, callbacks:{label:function(ctx){return '$'+ctx.parsed.x.toLocaleString();}}}
-        },
-        scales:{y:{ticks:{color:'#a5afb2', font: {size: 13}}}, x:{beginAtZero:true,ticks:{callback:function(v){return '$'+(v/1000|0)+'k';}, color: '#a5afb2', font: {size: 12}}, grid: {color: 'rgba(255,255,255,0.05)'}}}
-      }
-    });
-  }
-
-  // Debt bar chart
-  const debtEl = document.getElementById('debtArea');
-  if (debtEl && debtEl.getContext) {
-    const dctx = debtEl.getContext('2d');
-    if (debtArea) try{ debtArea.destroy(); } catch(e){}
-    debtArea = new Chart(dctx,{
-      type: 'bar',
-      data: {
-        labels: ['Bachelor','Master'],
-        datasets: [
-          { label: 'Average Debt After Graduation (USD)', data: [bDebt, mDebt], backgroundColor: ['rgba(45,226,230,0.9)','rgba(255,42,109,0.9)'], borderColor: ['#2DE2E6','#FF2A6D'], borderWidth:1 }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        indexAxis: 'y',
-        plugins: { 
-          legend: { position: 'top', labels: {font: {size: 12}, color: '#e0e4e7', padding: 12} },
-          tooltip:{backgroundColor: 'rgba(0,0,0,0.8)', titleFont: {size: 13}, bodyFont: {size: 12}, borderColor: 'rgba(45,226,230,0.3)', borderWidth: 1, callbacks:{label:function(ctx){return '$'+ctx.parsed.x.toLocaleString();}}}
-        },
-        scales: {
-          y: { beginAtZero: true, ticks: {color:'#a5afb2', font: {size: 13}} },
-          x: { beginAtZero: true, ticks: {callback:function(v){return '$'+(v/1000|0)+'k';}, color: '#a5afb2', font: {size: 12}}, grid: {color: 'rgba(255,255,255,0.05)'} }
-        }
-      }
-    });
-  }
-
-  // Update hero stat
-  const lifetimeDiff = (mProj[30] - bProj[30]);
-  document.getElementById('lifetime-diff').innerText = lifetimeDiff ? `$${(lifetimeDiff/1000).toFixed(1)}k` : '—';
-
-  // Update summary cards
-  const setIf = (id, val) => { const el = document.getElementById(id); if (!el) return; el.innerText = val; };
-  setIf('b-salary', stats.bachelor.avgSalary ? `$${stats.bachelor.avgSalary.toLocaleString()}` : `$${bSalary.toLocaleString()}`);
-  setIf('m-salary', stats.master.avgSalary ? `$${stats.master.avgSalary.toLocaleString()}` : `$${mSalary.toLocaleString()}`);
-  setIf('b-debt', stats.bachelor.avgDebt ? `$${stats.bachelor.avgDebt.toLocaleString()}` : `$${bDebt.toLocaleString()}`);
-  setIf('m-debt', stats.master.avgDebt ? `$${stats.master.avgDebt.toLocaleString()}` : `$${mDebt.toLocaleString()}`);
-  setIf('b-roi', bProj[30] ? `$${bProj[30].toLocaleString()}` : '—');
-  setIf('m-roi', mProj[30] ? `$${mProj[30].toLocaleString()}` : '—');
+  return null;
 }
 
-/**
- * Compute full ROI with all financial metrics and update all charts
- */
-function computeROI() {
+function buildFinancialSummary(scenario = BASELINE_SCENARIO) {
+  const bachelorProjection = projectEarnings({
+    startSalary: scenario.bachelorSalary,
+    growthRate: scenario.growthRate,
+    totalDebt: scenario.bachelorDebt,
+    annualRate: scenario.interestRate,
+    repaymentYears: scenario.repaymentYears,
+    taxRate: scenario.taxRate,
+    costIndex: scenario.costIndex
+  });
+
+  const masterProjection = projectEarnings({
+    startSalary: scenario.masterSalary,
+    growthRate: scenario.growthRate,
+    totalDebt: scenario.masterDebt,
+    annualRate: scenario.interestRate,
+    repaymentYears: scenario.repaymentYears,
+    taxRate: scenario.taxRate,
+    costIndex: scenario.costIndex
+  });
+
+  const breakEvenYear = computeBreakEvenYear(bachelorProjection, masterProjection);
+  const bachelorTotal30 = bachelorProjection[30].cumulativeNet;
+  const masterTotal30 = masterProjection[30].cumulativeNet;
+  const advantage30 = masterTotal30 - bachelorTotal30;
+  const advantage15 = masterProjection[15].cumulativeNet - bachelorProjection[15].cumulativeNet;
+
+  return {
+    scenario,
+    breakEvenYear,
+    bachelorMonthly: Math.round(
+      calculateMonthlyPayment(scenario.bachelorDebt, scenario.interestRate, scenario.repaymentYears)
+    ),
+    masterMonthly: Math.round(
+      calculateMonthlyPayment(scenario.masterDebt, scenario.interestRate, scenario.repaymentYears)
+    ),
+    bachelorTotal30,
+    masterTotal30,
+    advantage30,
+    advantage15
+  };
+}
+
+function formatMoney(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0
+  }).format(value);
+}
+
+function buildSystemPrompt(summary) {
+  return [
+    "You are a decision advisor focused on whether a Master's in CS is financially worth it.",
+    "Reason using the provided model outputs and explain in plain language.",
+    "Keep answers concise and structured.",
+    "Always include:",
+    "1) Direct recommendation",
+    "2) Why (break-even + 30-year advantage)",
+    "3) Risk caveats (debt, taxes, growth assumptions)",
+    "4) One actionable next step",
+    "Financial model context:",
+    `- Baseline Bachelor debt: ${summary.scenario.bachelorDebt}`,
+    `- Baseline Master debt: ${summary.scenario.masterDebt}`,
+    `- Baseline Bachelor salary: ${summary.scenario.bachelorSalary}`,
+    `- Baseline Master salary: ${summary.scenario.masterSalary}`,
+    `- Interest rate: ${summary.scenario.interestRate}%`,
+    `- Salary growth: ${summary.scenario.growthRate}%`,
+    `- Tax rate: ${summary.scenario.taxRate}%`,
+    `- Break-even year: ${summary.breakEvenYear ?? "No break-even in 30 years"}`,
+    `- Bachelor monthly loan: ${summary.bachelorMonthly}`,
+    `- Master monthly loan: ${summary.masterMonthly}`,
+    `- Bachelor 30-year net: ${summary.bachelorTotal30}`,
+    `- Master 30-year net: ${summary.masterTotal30}`,
+    `- 15-year advantage (Master-Bachelor): ${summary.advantage15}`,
+    `- 30-year advantage (Master-Bachelor): ${summary.advantage30}`
+  ].join("\n");
+}
+
+function addKeyNote(text) {
+  const normalized = text.trim();
+  if (!normalized) return;
+
+  const key = normalized.toLowerCase();
+  if (noteKeySet.has(key)) return;
+  noteKeySet.add(key);
+
+  const item = document.createElement("li");
+
+  const noteText = document.createElement("span");
+  noteText.className = "note-text";
+  noteText.contentEditable = "true";
+  noteText.spellcheck = true;
+  noteText.textContent = normalized;
+  noteText.dataset.noteKey = key;
+
+  noteText.addEventListener("blur", () => {
+    const oldKey = noteText.dataset.noteKey;
+    const updated = noteText.textContent.trim();
+
+    if (!updated) {
+      noteKeySet.delete(oldKey);
+      item.remove();
+      return;
+    }
+
+    const newKey = updated.toLowerCase();
+    if (newKey !== oldKey) {
+      noteKeySet.delete(oldKey);
+      if (noteKeySet.has(newKey)) {
+        item.remove();
+        return;
+      }
+      noteKeySet.add(newKey);
+      noteText.dataset.noteKey = newKey;
+    }
+  });
+
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.className = "note-remove";
+  removeBtn.textContent = "Remove";
+
+  removeBtn.addEventListener("click", () => {
+    noteKeySet.delete(noteText.dataset.noteKey);
+    item.remove();
+  });
+
+  item.appendChild(noteText);
+  item.appendChild(removeBtn);
+  keyNotesList.appendChild(item);
+}
+
+function extractKeyNotesFromAnswer(answer) {
+  // Extract all key information components
+  const info = {
+    recommendation: null,
+    breakEven: null,
+    advantage: null,
+    debt: null,
+    university: null,
+    cost: null,
+    risks: [],
+    actions: []
+  };
+
+  // Extract recommendation
+  const recommendMatch = answer.match(/(?:recommend|suggestion|verdict):\s*([^.!?]+[.!?])/i);
+  if (recommendMatch) {
+    info.recommendation = recommendMatch[1].trim();
+  }
+
+  // Extract break-even
+  const breakEvenMatch = answer.match(/break-?even[^.!?]*?(year\s*\d+|\d+\s*years?|never|not\s+achieve)/i);
+  if (breakEvenMatch) {
+    info.breakEven = breakEvenMatch[0].trim();
+  }
+
+  // Extract 30-year advantage
+  const advantageMatch = answer.match(/(30-year|lifetime)\s+advantage[^.!?]*(\$[\d,]+)/i);
+  if (advantageMatch) {
+    info.advantage = advantageMatch[2].trim();
+  }
+
+  // Extract debt information
+  const debtMatch = answer.match(/debt[^.!?]*(\$[\d,]+)/i);
+  if (debtMatch) {
+    info.debt = debtMatch[0].trim();
+  }
+
+  // Extract university-specific information
+  const universityMatch = answer.match(/(Stanford|MIT|Rutgers|Harvard|[A-Z][a-z]+\s+University)[^.!?]*(?:tuition|cost|annual)[^.!?]*(\$[\d,]+)/i);
+  if (universityMatch) {
+    info.university = universityMatch[0].trim();
+  }
+
+  // Extract total cost information
+  const costMatch = answer.match(/total\s+(?:annual\s+)?cost[^.!?]*(\$[\d,]+)/i);
+  if (costMatch) {
+    info.cost = costMatch[0].trim();
+  }
+
+  // Extract all risk/caveat mentions
+  const riskMatches = answer.matchAll(/(?:risk|caution|concern|caveat|however|but)[^.!?]*?([^.!?]{15,100}[.!?])/gi);
+  for (const match of riskMatches) {
+    info.risks.push(match[1].trim());
+  }
+
+  // Extract action items
+  const actionMatches = answer.matchAll(/(?:next step|action|should|consider|explore|check)[^.!?]*?([^.!?]{15,100}[.!?])/gi);
+  for (const match of actionMatches) {
+    info.actions.push(match[1].trim());
+  }
+
+  // Compile comprehensive summary and split into 1-2 notes
+  const notes = [];
+
+  // Note 1: Primary decision and financial summary
+  const note1Parts = [];
+  if (info.recommendation) {
+    note1Parts.push(info.recommendation);
+  }
+  if (info.university) {
+    note1Parts.push(info.university);
+  } else if (info.cost) {
+    note1Parts.push(info.cost);
+  }
+  if (info.breakEven) {
+    note1Parts.push(info.breakEven);
+  }
+  if (info.advantage) {
+    note1Parts.push(`30-year advantage: ${info.advantage}`);
+  } else if (info.debt && !info.university) {
+    note1Parts.push(info.debt);
+  }
+
+  if (note1Parts.length > 0) {
+    notes.push(note1Parts.join('. '));
+  }
+
+  // Note 2: Risks, considerations, and actions
+  const note2Parts = [];
+  if (info.risks.length > 0) {
+    // Take the most relevant risk (usually first or longest)
+    const mainRisk = info.risks.sort((a, b) => b.length - a.length)[0];
+    note2Parts.push(`Risk: ${mainRisk}`);
+  }
+  if (info.actions.length > 0) {
+    // Take the most actionable item
+    const mainAction = info.actions[0];
+    note2Parts.push(`Action: ${mainAction}`);
+  }
+
+  if (note2Parts.length > 0) {
+    notes.push(note2Parts.join(' '));
+  }
+
+  // Return max 2 comprehensive notes
+  return notes.slice(0, 2);
+}
+
+function populateTopGeneralInfo(summary) {
+  infoBachelor.textContent = `Bachelor baseline: ${formatMoney(summary.scenario.bachelorSalary)} salary, ${formatMoney(summary.scenario.bachelorDebt)} debt`;
+  infoMaster.textContent = `Master baseline: ${formatMoney(summary.scenario.masterSalary)} salary, ${formatMoney(summary.scenario.masterDebt)} debt`;
+  lensBreakEven.textContent = `Break-even year: ${summary.breakEvenYear === null ? "No break-even within 30 years" : `Year ${summary.breakEvenYear}`}`;
+}
+
+function extractResponseText(payload) {
+  if (!payload || typeof payload !== "object") return "";
+
+  if (typeof payload.output_text === "string" && payload.output_text.trim()) {
+    return payload.output_text.trim();
+  }
+
+  if (Array.isArray(payload.output)) {
+    const collected = [];
+
+    for (const item of payload.output) {
+      if (!item || !Array.isArray(item.content)) continue;
+
+      for (const block of item.content) {
+        const maybeText = typeof block?.text === "string" ? block.text : block?.text?.value;
+        if (typeof maybeText === "string" && maybeText.trim()) {
+          collected.push(maybeText.trim());
+        }
+      }
+    }
+
+    if (collected.length) {
+      return collected.join("\n\n");
+    }
+  }
+
+  if (Array.isArray(payload.choices)) {
+    const choice0 = payload.choices[0];
+    const content = choice0?.message?.content;
+
+    if (typeof content === "string" && content.trim()) {
+      return content.trim();
+    }
+
+    if (Array.isArray(content)) {
+      const fromParts = content
+        .map((part) => (typeof part?.text === "string" ? part.text : ""))
+        .filter(Boolean)
+        .join("\n\n")
+        .trim();
+
+      if (fromParts) return fromParts;
+    }
+  }
+
+  return "";
+}
+
+async function askAdvisor(userPrompt) {
+  validateAdvisorUrl(ADVISOR_API_URL);
+
+  let response;
   try {
-    // Get all input elements
-    const bDebtEl = document.getElementById('bachelor-debt');
-    const mDebtEl = document.getElementById('master-debt');
-    const repaymentEl = document.getElementById('repayment-period');
-    const interestEl = document.getElementById('interest');
-    const bSalaryEl = document.getElementById('bachelor-salary');
-    const mSalaryEl = document.getElementById('master-salary');
-    const growthEl = document.getElementById('growth');
-    const taxRateEl = document.getElementById('tax-rate');
-    const locationEl = document.getElementById('location-tier');
-    
-    // Safety check
-    if (!bDebtEl || !mDebtEl || !repaymentEl || !interestEl || !bSalaryEl || !mSalaryEl || !growthEl) {
-      console.warn('❌ Some ROI input elements missing');
-      return;
-    }
-    
-    // Get values
-    const bDebt = Number(bDebtEl.value);
-    const mDebt = Number(mDebtEl.value);
-    const repaymentYears = Number(repaymentEl.value);
-    const interestRate = Number(interestEl.value);
-    const bStartSalary = Number(bSalaryEl.value);
-    const mStartSalary = Number(mSalaryEl.value);
-    const growthRate = Number(growthEl.value);
-    const taxRate = Number((taxRateEl && taxRateEl.value) || 0);
-    const costIndex = Number((locationEl && locationEl.value) || 1);
-    
-    console.log('🧮 ROI Calculation:', {bDebt, mDebt, repaymentYears, interestRate, bStartSalary, mStartSalary, growthRate, taxRate, costIndex});
-    
-    // Calculate monthly payments
-    const bMonthly = calculateMonthlyPayment(bDebt, interestRate, repaymentYears);
-    const mMonthly = calculateMonthlyPayment(mDebt, interestRate, repaymentYears);
-    
-    console.log('💳 Monthly Payments - Bachelor: $' + bMonthly.toFixed(2) + ', Master: $' + mMonthly.toFixed(2));
-    
-    // Generate full 30-year projections for both paths
-    const bProjection = projectEarnings(bStartSalary, growthRate, 30, bDebt, interestRate, repaymentYears, {
-      taxRate,
-      costIndex
-    });
-    const mProjection = projectEarnings(mStartSalary, growthRate, 30, mDebt, interestRate, repaymentYears, {
-      taxRate,
-      costIndex
-    });
-    
-    // Find break-even year
-    let breakEvenYear = 'Not Possible';
-    for (let i = 0; i <= 30; i++) {
-      if (mProjection[i] && bProjection[i] && mProjection[i].cumulativeNet >= bProjection[i].cumulativeNet) {
-        breakEvenYear = i;
-        console.log(`✓ Break-even at year ${i}`);
-        break;
-      }
-    }
-    
-    // Extract cumulative values for charting
-    const years = Array.from({length: 31}, (_, i) => i);
-    const bCumulative = bProjection.map(p => p.cumulativeNet);
-    const mCumulative = mProjection.map(p => p.cumulativeNet);
-    
-    // Calculate annual salary advantage (gross salary difference)
-    const annualAdvantage = [];
-    for (let i = 0; i <= 30; i++) {
-      const bAnnual = bProjection[i].netEarningsThisYear;
-      const mAnnual = mProjection[i].netEarningsThisYear;
-      annualAdvantage.push(mAnnual - bAnnual);
-    }
-    
-    // Calculate ROI (cumulative advantage over time)
-    const roiOverTime = [];
-    for (let i = 0; i <= 30; i++) {
-      roiOverTime.push(mCumulative[i] - bCumulative[i]);
-    }
-    
-    // 30-year totals
-    const bTotal30 = bCumulative[30];
-    const mTotal30 = mCumulative[30];
-    const advantage30 = mTotal30 - bTotal30;
-    
-    console.log('📊 Results:', {breakEvenYear, bTotal30, mTotal30, advantage30});
-    
-    // Update output display
-    document.getElementById('roi-break').innerText = breakEvenYear;
-    document.getElementById('bachelor-monthly').innerText = '$' + bMonthly.toFixed(2) + '/mo';
-    document.getElementById('master-monthly').innerText = '$' + mMonthly.toFixed(2) + '/mo';
-    document.getElementById('roi-profit').innerText = advantage30 >= 0 
-      ? `Gain $${Math.abs(advantage30).toLocaleString()}` 
-      : `Loss $${Math.abs(advantage30).toLocaleString()}`;
-    document.getElementById('roi-bachelor-total').innerText = '$' + bTotal30.toLocaleString();
-    document.getElementById('roi-master-total').innerText = '$' + mTotal30.toLocaleString();
-
-    const advantage15 = mCumulative[15] - bCumulative[15];
-    const summary15 = document.getElementById('summary-15y');
-    if (summary15) {
-      summary15.innerText = `After 15 years: ${advantage15 >= 0 ? 'Master leads by' : 'Bachelor leads by'} $${Math.abs(advantage15).toLocaleString()}.`;
-    }
-    const summaryBreak = document.getElementById('summary-breakeven');
-    if (summaryBreak) {
-      summaryBreak.innerText = breakEvenYear === 'Not Possible'
-        ? 'Break-even outlook: Master path does not break even within 30 years under current assumptions.'
-        : `Break-even outlook: Master path overtakes Bachelor in year ${breakEvenYear}.`;
-    }
-    const retirementValue = Math.round(Math.max(0, advantage30) * 1.07);
-    const summaryRetire = document.getElementById('summary-retirement');
-    if (summaryRetire) {
-      summaryRetire.innerText = `Projected additional retirement value: $${retirementValue.toLocaleString()} (illustrative 7% growth estimate).`;
-    }
-    
-    // Update quick advantage (top right card)
-    const quickAdvEl = document.getElementById('quick-advantage');
-    if (quickAdvEl) {
-      quickAdvEl.innerText = advantage30 >= 0 
-        ? '$' + Math.abs(advantage30).toLocaleString() 
-        : '-$' + Math.abs(advantage30).toLocaleString();
-    }
-
-    updateQualitativeInsight(advantage30);
-    
-    // Update Break-Even Chart
-    if (breakChart) {
-      breakChart.data.labels = years;
-      breakChart.data.datasets[0].data = bCumulative;
-      breakChart.data.datasets[1].data = mCumulative;
-      const pointRadius = getChartPointRadius();
-      breakChart.data.datasets[0].pointRadius = pointRadius;
-      breakChart.data.datasets[1].pointRadius = pointRadius;
-      breakChart.update();
-    }
-    
-    // Update Hero Mini Chart
-    if (heroMini) {
-      heroMini.data.labels = years;
-      heroMini.data.datasets[0].data = bCumulative;
-      heroMini.data.datasets[1].data = mCumulative;
-      const pointRadius = getChartPointRadius();
-      heroMini.data.datasets[0].pointRadius = pointRadius;
-      heroMini.data.datasets[1].pointRadius = pointRadius;
-      heroMini.update();
-    }
-    
-    // Update Salary Bar Chart
-    if (salaryBar) {
-      salaryBar.data.datasets[0].data = [bStartSalary, mStartSalary];
-      salaryBar.update();
-    }
-    
-    // Update Debt Bar Chart
-    if (debtArea) {
-      debtArea.data.datasets[0].data = [bDebt, mDebt];
-      debtArea.update();
-    }
-    
-    // Update ROI vs Time Chart
-    updateOrCreateROIVsTimeChart(years, roiOverTime);
-    
-    // Update Annual Advantage Chart
-    updateOrCreateAnnualAdvantageChart(years, annualAdvantage);
-    
-    // Update hero lifetime difference
-    const lifetimeDiff = advantage30;
-    const lifetimeDiffEl = document.getElementById('lifetime-diff');
-    if (lifetimeDiffEl) {
-      lifetimeDiffEl.innerText = lifetimeDiff ? `$${(lifetimeDiff / 1000).toFixed(1)}k` : '—';
-    }
-    
-    console.log('✅ computeROI complete');
-    
-  } catch (err) {
-    console.error('❌ computeROI failed:', err);
-  }
-}
-
-/**
- * Create or update the ROI vs Time chart (cumulative advantage)
- */
-function updateOrCreateROIVsTimeChart(years, roiData) {
-  const roiEl = document.getElementById('roiVsTimeChart');
-  if (!roiEl || !roiEl.getContext) return;
-  
-  const ctx = roiEl.getContext('2d');
-  if (roiVsTimeChart) try { roiVsTimeChart.destroy(); } catch(e){}
-  const pointRadius = getChartPointRadius();
-  
-  roiVsTimeChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: years,
-      datasets: [
-        {
-          label: "Master's Financial Advantage (Cumulative)",
-          data: roiData,
-          borderColor: '#2DE2E6',
-          backgroundColor: 'rgba(45,226,230,0.1)',
-          fill: true,
-          tension: 0.3,
-          pointRadius: pointRadius,
-          borderWidth: 2,
-          pointHoverRadius: 6
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { position: 'top', labels: {font: {size: 12}, color:'#e0e4e7', padding: 12} },
-        tooltip: {
-          backgroundColor: 'rgba(0,0,0,0.8)',
-          titleColor: '#fff',
-          titleFont: {size: 13},
-          bodyColor: '#e0e4e7',
-          bodyFont: {size: 12},
-          borderColor: 'rgba(45,226,230,0.3)',
-          borderWidth: 1,
-          callbacks: {
-            label: function(ctx){
-              return 'Advantage: $' + ctx.parsed.y.toLocaleString();
-            }
-          }
-        }
+    response = await fetch(`${ADVISOR_API_URL}/api/advisor`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
       },
-      scales: {
-        y: {
-          title: { display: true, text: 'Cumulative Advantage (USD)', color:'#a5afb2', font: {size: 13, weight: '600'} },
-          ticks: {callback:function(v){return '$'+(v/1000|0)+'k';}, color: '#a5afb2', font: {size: 12}},
-          grid: {color:'rgba(255,255,255,0.05)'}
-        },
-        x: {
-          title: { display: true, text: 'Years After Graduation', color:'#a5afb2', font: {size: 13, weight: '600'} },
-          grid: {color:'rgba(255,255,255,0.05)'},
-          ticks: {color: '#a5afb2', font: {size: 12}}
-        }
-      }
-    }
-  });
-}
-
-/**
- * Create or update the Annual Advantage chart (year-over-year benefit)
- */
-function updateOrCreateAnnualAdvantageChart(years, advantageData) {
-  const advEl = document.getElementById('annualAdvantageChart');
-  if (!advEl || !advEl.getContext) return;
-  
-  const ctx = advEl.getContext('2d');
-  if (annualAdvantageChart) try { annualAdvantageChart.destroy(); } catch(e){}
-  const selectedType = getAnnualChartType();
-  const pointRadius = getChartPointRadius();
-  
-  // Determine color based on positive/negative
-  const colors = advantageData.map(v => v >= 0 ? 'rgba(45,226,230,0.8)' : 'rgba(255,42,109,0.8)');
-  
-  annualAdvantageChart = new Chart(ctx, {
-    type: selectedType,
-    data: {
-      labels: years,
-      datasets: [
-        {
-          label: "Annual Net Salary Advantage (Master - Bachelor)",
-          data: advantageData,
-          backgroundColor: colors,
-          borderColor: '#2DE2E6',
-          borderRadius: 4,
-          borderSkipped: false,
-          pointRadius: pointRadius,
-          tension: 0.2,
-          fill: false
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'top', labels: {font: {size: 12}, color:'#e0e4e7', padding: 12} },
-        tooltip: {
-          backgroundColor: 'rgba(0,0,0,0.8)',
-          titleColor: '#fff',
-          titleFont: {size: 13},
-          bodyColor: '#e0e4e7',
-          bodyFont: {size: 12},
-          borderColor: 'rgba(45,226,230,0.3)',
-          borderWidth: 1,
-          callbacks: {
-            label: function(ctx){
-              return ctx.parsed.y >= 0 
-                ? 'Master Advantage: $' + ctx.parsed.y.toLocaleString()
-                : 'Bachelor Advantage: $' + Math.abs(ctx.parsed.y).toLocaleString();
-            }
-          }
-        }
-      },
-      scales: {
-        y: {
-          title: { display: true, text: 'Annual Advantage (USD)', color:'#a5afb2', font: {size: 13, weight: '600'} },
-          ticks: {callback:function(v){return '$'+(v/1000|0)+'k';}, color: '#a5afb2', font: {size: 12}},
-          grid: {color:'rgba(255,255,255,0.05)'}
-        },
-        x: {
-          title: { display: true, text: 'Years After Graduation', color:'#a5afb2', font: {size: 13, weight: '600'} },
-          grid: {color:'rgba(255,255,255,0.05)'},
-          ticks: {color: '#a5afb2', font: {size: 12}}
-        }
-      }
-    }
-  });
-}
-
-function updateQualitativeInsight(advantage30) {
-  const worklife = Number((document.getElementById('q-worklife') || {}).value || 2);
-  const career = Number((document.getElementById('q-career') || {}).value || 2);
-  const debt = Number((document.getElementById('q-debt') || {}).value || 2);
-  const insightEl = document.getElementById('qualitative-insight');
-  if (!insightEl) return;
-
-  let recommendation = 'Balanced profile: review both financial and lifestyle factors before deciding.';
-  if (advantage30 >= 0 && career >= 2 && debt >= 2) {
-    recommendation = 'Your profile favors a Master path financially and professionally, as long as debt remains manageable.';
-  } else if (worklife >= 3 && debt <= 2) {
-    recommendation = 'Your priorities suggest caution: a Bachelor path may better protect lifestyle flexibility and debt comfort.';
-  } else if (advantage30 < 0) {
-    recommendation = 'Current assumptions favor the Bachelor path financially; pursue Master mainly for non-financial goals.';
-  }
-  insightEl.innerText = recommendation;
-}
-
-
-/**
- * Setup ROI calculator with live updates from all inputs
- */
-function setupROI() {
-  console.log('🎚️ Setting up ROI calculator');
-  
-  // Get all input elements
-  const inputs = {
-    'bachelor-debt': document.getElementById('bachelor-debt'),
-    'master-debt': document.getElementById('master-debt'),
-    'repayment-period': document.getElementById('repayment-period'),
-    'interest': document.getElementById('interest'),
-    'bachelor-salary': document.getElementById('bachelor-salary'),
-    'master-salary': document.getElementById('master-salary'),
-    'growth': document.getElementById('growth'),
-    'tax-rate': document.getElementById('tax-rate')
-  };
-  
-  // Get all numeric number input elements (for dual control)
-  const numInputs = {
-    'bachelor-debt-num': document.getElementById('bachelor-debt-num'),
-    'master-debt-num': document.getElementById('master-debt-num'),
-    'repayment-period-num': document.getElementById('repayment-period-num'),
-    'interest-num': document.getElementById('interest-num'),
-    'bachelor-salary-num': document.getElementById('bachelor-salary-num'),
-    'master-salary-num': document.getElementById('master-salary-num'),
-    'growth-num': document.getElementById('growth-num'),
-    'tax-rate-num': document.getElementById('tax-rate-num')
-  };
-  
-  // Get all display value elements
-  const displays = {
-    'bachelor-debt': document.getElementById('bachelor-debt-val'),
-    'master-debt': document.getElementById('master-debt-val'),
-    'repayment-period': document.getElementById('repayment-period-val'),
-    'interest': document.getElementById('interest-val'),
-    'bachelor-salary': document.getElementById('bachelor-salary-val'),
-    'master-salary': document.getElementById('master-salary-val'),
-    'growth': document.getElementById('growth-val'),
-    'tax-rate': document.getElementById('tax-rate-val')
-  };
-  
-  // Safety check
-  if (!inputs['bachelor-debt'] || !inputs['growth']) {
-    console.error('❌ Missing slider elements');
-    return;
-  }
-  
-  // Update display values
-  function updateDisplay(fieldKey, value) {
-    const display = displays[fieldKey];
-    if (!display) return;
-    
-    // Also update the number input field with nice formatting for currency fields
-    const numInput = numInputs[fieldKey + '-num'];
-    if (numInput && (fieldKey.includes('debt') || fieldKey.includes('salary'))) {
-      const numVal = Number(value);
-      numInput.value = numVal.toLocaleString('en-US', {maximumFractionDigits: 0});
-    }
-    
-    if (fieldKey === 'repayment-period') {
-      display.innerText = value + ' years';
-    } else if (fieldKey === 'interest' || fieldKey === 'growth' || fieldKey === 'tax-rate') {
-      display.innerText = Number(value).toFixed(1) + '%';
-    } else {
-      display.innerText = '$' + Number(value).toLocaleString('en-US', {maximumFractionDigits: 0});
-    }
-  }
-  
-  // Sync slider and number inputs, update display, and recalculate
-  function syncAndCalculate(fieldKey) {
-    const slider = inputs[fieldKey];
-    const numInput = numInputs[fieldKey + '-num'];
-    
-    if (!slider) return;
-    if (!numInput) {
-      updateDisplay(fieldKey, Number(slider.value));
-      return;
-    }
-    
-    if (numInput === document.activeElement) {
-      const rawNumVal = numInput.value.replace(/[^0-9.-]/g, '');
-      const numVal = Number(rawNumVal) || 0;
-      const min = Number(slider.min);
-      const max = Number(slider.max);
-      slider.value = Math.max(min, Math.min(max, numVal));
-    } else {
-      numInput.value = slider.value;
-    }
-    
-    const finalValue = Number(slider.value);
-    updateDisplay(fieldKey, finalValue);
-  }
-  
-  // Add blur handler for proper number formatting
-  Object.keys(numInputs).forEach(key => {
-    const numInput = numInputs[key];
-    if (!numInput) return;
-    
-    // Add input validation and formatting
-    numInput.addEventListener('input', function() {
-      const fieldKey = key.replace('-num', '');
-      // Allow only digits
-      this.value = this.value.replace(/[^0-9.-]/g, '');
+      body: JSON.stringify({
+        prompt: userPrompt
+      })
     });
-    
-    numInput.addEventListener('blur', function() {
-      const fieldKey = key.replace('-num', '');
-      const rawVal = this.value.replace(/[^0-9.-]/g, '');
-      let numVal = Number(rawVal) || 0;
-      const slider = inputs[fieldKey];
+  } catch (error) {
+    if (String(error?.message || "").toLowerCase().includes("failed to fetch")) {
+      throw new Error(
+        `Cannot reach MCP advisor bridge at ${ADVISOR_API_URL}. Start it with: python mcp_bridge.py`
+      );
+    }
+    throw error;
+  }
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Advisor bridge error ${response.status}: ${errText}`);
+  }
+
+  const payload = await response.json();
+  if (!payload?.answer) {
+    throw new Error("Advisor bridge returned no answer text.");
+  }
+
+  return payload;
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const prompt = input.value.trim();
+  if (!prompt) return;
+
+  addMessage("user", prompt);
+  input.value = "";
+  autoResizePromptField();
+
+  sendBtn.disabled = true;
+  addMessage("system", "Analyzing with University Cost MCP + Graph MCP...");
+
+  try {
+    const result = await askAdvisor(prompt);
+    addMessage("assistant", result.answer);
+
+    if (result?.mcp?.graph?.used && result?.graph?.html) {
+      addGraphMessage(result.graph);
+    }
+
+    if (result?.mcp?.universityCost?.used) {
+      const mode = result.mcp.universityCost.mode;
       
-      if (slider) {
-        const min = Number(slider.min);
-        const max = Number(slider.max);
-        // Clamp and validate
-        numVal = Math.max(min, Math.min(max, numVal));
-        slider.value = numVal;
-        updateDisplay(fieldKey, numVal);
-        computeROI();
+      if (mode === "university_detected_unavailable") {
+        // Handle both single and multiple detected universities
+        const detected = result?.universityData?.detected_university;
+        const detectedList = result?.universityData?.detected_universities;
+        
+        if (detectedList && detectedList.length > 0) {
+          const universityList = detectedList.join(", ");
+          addMessage(
+            "system",
+            `Recognized your question about ${universityList}, but detailed cost data for these universities is not currently available in our database. The advisor is using baseline projections for comparison.`
+          );
+        } else if (detected) {
+          addMessage(
+            "system",
+            `Recognized your question about ${detected}, but detailed cost data for this university is not currently available in our database. The advisor can only provide general guidance.`
+          );
+        }
+      } else if (mode === "compare_university_costs") {
+        addMessage(
+          "system",
+          `University Cost MCP retrieved data for multiple universities${result?.graph?.html ? `; Graph MCP generated a ${result?.graph?.type || "chart"}` : ""}.`
+        );
+      } else {
+        addMessage(
+          "system",
+          `University Cost MCP used via ${mode || "query"}${result?.graph?.html ? `; Graph MCP generated a ${result?.graph?.type || "chart"}` : ""}.`
+        );
       }
-    });
-  });
-  
-  // Create unified event handler
-  const handleChange = function() {
-    const id = this.id.replace('-num', '');
-    syncAndCalculate(id);
-    computeROI();
-  };
-
-  const locationSelector = document.getElementById('location-tier');
-  const locationVal = document.getElementById('location-tier-val');
-  if (locationSelector) {
-    locationSelector.addEventListener('change', () => {
-      if (locationVal) {
-        const multiplier = Number(locationSelector.value || 1).toFixed(2);
-        locationVal.innerText = `x${multiplier}`;
-      }
-      computeROI();
-    });
-  }
-
-  const chartToggle = document.getElementById('chart-show-points');
-  if (chartToggle) chartToggle.addEventListener('change', () => computeROI());
-  const chartTypeSelector = document.getElementById('annual-chart-type');
-  if (chartTypeSelector) chartTypeSelector.addEventListener('change', () => computeROI());
-
-  ['q-worklife', 'q-career', 'q-debt'].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('change', () => computeROI());
-  });
-  
-  // Attach listeners to all inputs
-  Object.keys(inputs).forEach(key => {
-    if (inputs[key]) {
-      inputs[key].addEventListener('input', handleChange);
+    } else {
+      addMessage(
+        "system",
+        "Using baseline financial model and Graph MCP for projections."
+      );
     }
-    const numInput = numInputs[key + '-num'];
-    if (numInput) {
-      numInput.addEventListener('input', handleChange);
-    }
-  });
-  
-  console.log('✓ Event listeners attached');
-  
-  // Initialize display values
-  Object.keys(inputs).forEach(key => {
-    if (inputs[key]) {
-      updateDisplay(key, inputs[key].value);
-    }
-  });
 
-  if (locationSelector && locationVal) {
-    locationVal.innerText = `x${Number(locationSelector.value || 1).toFixed(2)}`;
+    const extractedNotes = extractKeyNotesFromAnswer(result.answer);
+    extractedNotes.forEach((note) => addKeyNote(note));
+  } catch (error) {
+    addMessage("assistant", `Error: ${error.message}`);
+  } finally {
+    sendBtn.disabled = false;
+    input.focus();
   }
-  
-  console.log('✓ Initial display values set');
-  
-  // Initial computation
-  computeROI();
-  
-  console.log('✅ setupROI complete');
-}
-
-/**
- * Populate data sources in footer
- */
-function populateSources() {
-  const sourcesList = document.getElementById('sources-list');
-  if (!sourcesList) return;
-  
-  const sources = [
-    { text: 'Education Data: Student Loan Debt by Major', url: 'https://educationdata.org/student-loan-debt-by-major' },
-    { text: 'GitHub: Degrees That Pay Back (ANLY 500)', url: 'https://github.com/YujiShen/anly-500-project/blob/master/degrees-that-pay-back.csv' },
-    { text: 'College Scorecard: Official U.S. Education Department Data', url: 'https://collegescorecard.ed.gov/data/' }
-  ];
-  
-  sourcesList.innerHTML = sources.map((src, idx) => 
-    `<li><a href="${src.url}" target="_blank" rel="noopener noreferrer">${src.text}</a></li>`
-  ).join('');
-}
-
-/**
- * Initialize everything when DOM is ready
- */
-function init() {
-  console.log('🚀 INIT STARTING');
-  try {
-    const stats = getDefaultStats();
-    console.log('📊 Got default stats:', stats);
-    CURRENT_STATS = stats;
-
-    console.log('📈 Creating initial charts...');
-    createCharts([], [], stats);
-
-    console.log('🎚️ Setting up ROI calculator...');
-    setupROI();
-    
-    console.log('📚 Populating data sources...');
-    populateSources();
-    console.log('✅ Initialization complete');
-  } catch (err) {
-    console.error('❌ Initialization error:', err);
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('📄 DOM Loaded');
-  const startBtn = document.getElementById('start-explore');
-  if (startBtn) {
-    startBtn.addEventListener('click', ()=>{ 
-      window.scrollTo({top:600,behavior:'smooth'}); 
-    });
-  }
-  init();
 });
+
+noteForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const customNote = noteInput.value.trim();
+  if (!customNote) return;
+  addKeyNote(customNote);
+  noteInput.value = "";
+});
+
+input.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    form.requestSubmit();
+  }
+});
+
+input.addEventListener("input", autoResizePromptField);
+
+const initialSummary = buildFinancialSummary();
+autoResizePromptField();
+populateTopGeneralInfo(initialSummary);
+addKeyNote(`Baseline break-even: ${initialSummary.breakEvenYear === null ? "No break-even in 30 years" : `Year ${initialSummary.breakEvenYear}`}`);
+addKeyNote(`30-year model advantage: ${formatMoney(initialSummary.advantage30)} (Master - Bachelor)`);
+addKeyNote(`Debt assumptions: Bachelor ${formatMoney(initialSummary.scenario.bachelorDebt)}, Master ${formatMoney(initialSummary.scenario.masterDebt)}`);
+
+addMessage(
+  "assistant",
+  "Ask a question about whether a CS Master's is worth it. I now use University Cost MCP for cost data when relevant and Graph MCP for projections/comparisons."
+);

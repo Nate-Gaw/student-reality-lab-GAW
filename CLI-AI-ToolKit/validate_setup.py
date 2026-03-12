@@ -5,14 +5,14 @@ import sys
 from pathlib import Path
 
 def check_env_file():
-    """Check if .env file exists and has required keys."""
-    env_path = Path(__file__).parent / ".env"
+    """Check if shared root .env file exists and has required keys."""
+    env_path = Path(__file__).resolve().parents[1] / ".env"
     
-    print("[*] Checking .env file...")
+    print("[*] Checking shared root .env file...")
     if not env_path.exists():
         print("[X] .env file not found")
         print(f"   Location: {env_path}")
-        print("   Copy from .env.example first!")
+        print("   Create student-reality-lab-GAW/.env first!")
         return False
     
     print(f"[OK] .env file found: {env_path}")
@@ -24,7 +24,7 @@ def check_env_file():
     valid = True
     
     if "OPENAI_API_KEY" not in content:
-        print("[!] OPENAI_API_KEY not found in .env")
+        print("[!] OPENAI_API_KEY not found in root .env")
         valid = False
     else:
         lines = [l for l in content.split('\n') if l.startswith('OPENAI_API_KEY')]
@@ -73,7 +73,7 @@ def check_api_key_format():
     from dotenv import load_dotenv
     import os
     
-    env_path = Path(__file__).parent / ".env"
+    env_path = Path(__file__).resolve().parents[1] / ".env"
     if not env_path.exists():
         return False
     
@@ -132,7 +132,7 @@ def main():
     else:
         print("\n[!] Some checks failed. Please fix the issues above.")
         print("\nCommon fixes:")
-        print("1. Copy .env.example to .env")
+        print("1. Add OPENAI_API_KEY to student-reality-lab-GAW/.env")
         print("2. Add valid API key from:")
         print("   - OpenAI: https://platform.openai.com/api-keys")
         print("3. Run: pip install -r requirements.txt")
