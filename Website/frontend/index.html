@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS Master's Worth It? Advisor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="bento">
+      <header class="tile tile-hero fade-up">
+        <p class="eyebrow">AI Financial Decision Assistant</p>
+        <h1 class="title">Is a Master's in CS worth it?</h1>
+        <p class="subtitle">Ask one clear question and get a concise answer grounded in break-even timing, debt impact, and long-run net earnings.</p>
+
+        <section class="general-info" aria-label="General information">
+          <p id="info-bachelor">Bachelor baseline: --</p>
+          <p id="info-master">Master baseline: --</p>
+        </section>
+      </header>
+
+      <aside class="tile tile-lens fade-up delay-2" aria-label="Decision factors">
+        <h2 class="lens-title">Decision Lens</h2>
+        <p id="lens-break-even">Break-even year: --</p>
+        <p>15-year and 30-year advantage</p>
+      </aside>
+
+      <aside class="tile tile-notes fade-up delay-1" aria-label="Key notes panel">
+        <h2 class="notes-title">Key Notes</h2>
+        <p class="notes-help">Important stats and guidance from AI responses are listed here automatically. You can edit or remove any note.</p>
+
+        <ul id="key-notes-list" class="notes-list"></ul>
+
+        <form id="note-form" class="note-form" autocomplete="off">
+          <label for="note-input" class="visually-hidden">Add note</label>
+          <textarea id="note-input" class="note-input" placeholder="Add a custom note..." rows="1"></textarea>
+          <button class="note-add-btn" type="submit">Add</button>
+        </form>
+      </aside>
+
+      <section class="tile tile-chat fade-up delay-1" aria-label="Chat assistant">
+        <section id="chat-log" class="chat-log" aria-live="polite"></section>
+
+        <form id="prompt-form" class="prompt-form">
+          <label for="prompt-input" class="visually-hidden">Ask your question</label>
+          <textarea
+            id="prompt-input"
+            class="prompt-input"
+            placeholder="Ask if a CS Master's is worth it for your situation..."
+            autocomplete="off"
+            rows="1"
+            required
+          ></textarea>
+          <button id="send-btn" class="send-btn" type="submit">Send</button>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

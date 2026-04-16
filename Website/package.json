@@ -1,15 +1,16 @@
 {
-  "name": "cs-masters-chat-advisor",
-  "version": "1.0.0",
+  "name": "college-roi-advisor",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:bridge": "python mcp_bridge.py",
+    "dev": "vite --port 5173 --host",
     "build": "vite build",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "chart.js": "^4.4.1"
+  },
   "devDependencies": {
-    "vite": "^6.2.2"
+    "vite": "^5.2.0"
   }
 }

@@ -27,74 +27,110 @@ class APIDataSource:
 class CollegeScorecard(APIDataSource):
     """
     US Department of Education College Scorecard API.
-    Free, no key required for basic access.
+    Get a free API key at https://api.data.gov/signup/ and set
+    COLLEGE_SCORECARD_API_KEY in your .env file.
+    Falls back to DEMO_KEY (heavily rate-limited) if no key is set.
     """
-    
+
     BASE_URL = "https://api.data.gov/ed/collegescorecard/v1/schools"
-    
+    FIELDS = (
+        "school.name,school.city,school.state,school.school_url,"
+        "latest.cost.tuition.in_state,latest.cost.tuition.out_of_state,"
+        "latest.cost.roomboard.oncampus,latest.cost.roomboard.offcampus,"
+        "latest.cost.attendance.academic_year,"
+        "latest.admissions.admission_rate.overall,"
+        "latest.completion.completion_rate_4yr_150nt,"
+        "latest.student.size,latest.student.grad_students,"
+        "latest.aid.students_with_pell_grant,"
+        "school.institutional_characteristics.level"
+    )
+
     def __init__(self):
         super().__init__()
-    
-    def fetch_universities(self, limit: int = 100, page: int = 0, search_name: Optional[str] = None) -> List[Dict]:
-        """Fetch US universities from College Scorecard."""
-        params = {
-            "api_key": "DEMO_KEY",
-            "_page": page,
-            "_per_page": limit,
-            "_fields": "school.name,school.city,school.state,latest.cost.tuition.in_state,latest.cost.tuition.out_of_state,latest.cost.roomboard.oncampus,latest.admissions.admission_rate.overall,latest.completion.completion_rate_4yr_150nt,school.school_url"
-        }
+        self.api_key = os.getenv("COLLEGE_SCORECARD_API_KEY", "DEMO_KEY")
+        if self.api_key == "DEMO_KEY":
+            print("[CollegeScorecard] WARNING: Using DEMO_KEY – heavily rate-limited. "
+                  "Get a free key at https://api.data.gov/signup/ and set COLLEGE_SCORECARD_API_KEY in .env")
 
-        if search_name:
-            params["school.name"] = search_name
-        
+    def _get(self, params: dict) -> dict:
+        params["api_key"] = self.api_key
+        params["_fields"] = self.FIELDS
         response = self.session.get(self.BASE_URL, params=params)
-
         if response.status_code == 429:
-            raise RuntimeError("College Scorecard API rate limited (HTTP 429). Try again later or use a dedicated API key.")
+            raise RuntimeError(
+                "College Scorecard API rate limited. "
+                "Get a free key at https://api.data.gov/signup/ and set COLLEGE_SCORECARD_API_KEY in .env"
+            )
         if response.status_code >= 400:
             raise RuntimeError(f"College Scorecard API error: HTTP {response.status_code}")
-        
-        if response.status_code == 200:
-            data = response.json()
-            return self.normalize_response(data)
-        return []
-    
+        return response.json() if response.status_code == 200 else {}
+
+    def search_by_name(self, name: str, limit: int = 5) -> List[Dict]:
+        """Direct targeted search for a university by name."""
+        data = self._get({"school.name": name, "_per_page": limit, "_page": 0})
+        return self.normalize_response(data)
+
+    def fetch_universities(self, limit: int = 100, page: int = 0, search_name: Optional[str] = None) -> List[Dict]:
+        """Fetch US universities from College Scorecard."""
+        params: dict = {"_page": page, "_per_page": limit}
+        if search_name:
+            params["school.name"] = search_name
+        data = self._get(params)
+        return self.normalize_response(data)
+
     def normalize_response(self, raw_data: Dict) -> List[Dict]:
         """Convert College Scorecard data to our schema."""
         normalized = []
-        
+
         for school in raw_data.get("results", []):
             try:
-                school_data = school.get("school", {})
-                latest = school.get("latest", {})
-                cost = latest.get("cost", {})
-                tuition = cost.get("tuition", {})
-                admissions = latest.get("admissions", {})
-                completion = latest.get("completion", {})
-                
-                # Bachelor's program
-                bachelor_record = {
-                    "university_name": school_data.get("name"),
+                # College Scorecard returns flat dot-notation keys, e.g. "school.name",
+                # "latest.cost.tuition.out_of_state" — NOT nested dicts.
+                def _f(key):
+                    return school.get(key)
+
+                name = _f("school.name")
+                if not name:
+                    continue
+
+                in_state = _f("latest.cost.tuition.in_state")
+                out_of_state = _f("latest.cost.tuition.out_of_state")
+                housing = _f("latest.cost.roomboard.oncampus") or _f("latest.cost.roomboard.offcampus")
+                total_attendance = _f("latest.cost.attendance.academic_year")
+                grad_students = _f("latest.student.grad_students")
+
+                shared = {
+                    "university_name": name,
                     "country": "United States",
-                    "city": school_data.get("city"),
-                    "degree_level": "bachelor",
+                    "city": _f("school.city"),
                     "currency": "USD",
-                    "domestic_tuition": tuition.get("in_state"),
-                    "international_tuition": tuition.get("out_of_state"),
-                    "estimated_housing_cost": cost.get("roomboard", {}).get("oncampus"),
-                    "acceptance_rate": admissions.get("admission_rate", {}).get("overall"),
-                    "graduation_rate": completion.get("completion_rate_4yr_150nt"),
-                    "official_website": school_data.get("school_url"),
+                    "domestic_tuition": in_state,
+                    # Out-of-state tuition is the closest proxy for non-resident / international cost
+                    "international_tuition": out_of_state,
+                    "estimated_housing_cost": housing,
+                    "estimated_total_annual_cost": total_attendance,
+                    "acceptance_rate": _f("latest.admissions.admission_rate.overall"),
+                    "graduation_rate": _f("latest.completion.completion_rate_4yr_150nt"),
+                    "official_website": _f("school.school_url"),
+                    "enrollment_count": _f("latest.student.size"),
+                    "has_financial_aid": bool(_f("latest.aid.students_with_pell_grant")),
                     "data_source": "US College Scorecard API",
-                    "last_updated": datetime.now()
+                    "last_updated": datetime.now(),
                 }
-                
-                if bachelor_record["university_name"]:
-                    normalized.append(bachelor_record)
+
+                # Bachelor record
+                bachelor = {**shared, "degree_level": "bachelor"}
+                normalized.append(bachelor)
+
+                # Master record – grad_students flag signals graduate programs exist
+                if grad_students:
+                    master = {**shared, "degree_level": "master"}
+                    normalized.append(master)
+
             except Exception as e:
                 print(f"Error normalizing school: {e}")
                 continue
-        
+
         return normalized
 
 

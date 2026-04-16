@@ -3,6 +3,7 @@ Test client for the Graph Generation MCP server.
 """
 import asyncio
 import json
+import sys
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
@@ -11,7 +12,7 @@ async def test_graph_mcp_server():
     """Test all graph generation tools."""
     
     server_params = StdioServerParameters(
-        command="python",
+        command=sys.executable,
         args=["server/mcp_server.py"],
     )
     

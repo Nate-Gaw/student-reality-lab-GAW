@@ -1,0 +1,1023 @@
+[
+  {
+    "i": 1,
+    "prompt": "Is a CS Master's at Rutgers worth it?",
+    "status": 200,
+    "elapsed_s": 4.522,
+    "answer_present": true,
+    "graph_type": "pie",
+    "profile_count": 1,
+    "resolved_candidates": [
+      "Rutgers University-New Brunswick"
+    ],
+    "expected_colleges": [
+      "Rutgers University-New Brunswick"
+    ],
+    "answer_mentions": [
+      "Rutgers University-New Brunswick"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, Rutgers University-New Brunswick shows the strongest ROI. Estimated total cost is $58000, median salary $110000, and break-even is about 0.53 years.\nVerified data: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years",
+    "error": null
+  },
+  {
+    "i": 2,
+    "prompt": "Compare ROI of NJIT vs Rutgers for a CS Master's.",
+    "status": 200,
+    "elapsed_s": 4.128,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 2,
+    "resolved_candidates": [
+      "Rutgers University-New Brunswick",
+      "New Jersey Institute of Technology"
+    ],
+    "expected_colleges": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "answer_mentions": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years. Strongest ROI: Rutgers University-New Brunswick.\nVerified data: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years",
+    "error": null
+  },
+  {
+    "i": 3,
+    "prompt": "Which has better ROI: Stanford or Rutgers for a CS Master's?",
+    "status": 200,
+    "elapsed_s": 4.156,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 2,
+    "resolved_candidates": [
+      "Stanford University",
+      "Rutgers University-New Brunswick"
+    ],
+    "expected_colleges": [
+      "Rutgers University-New Brunswick",
+      "Stanford University"
+    ],
+    "answer_mentions": [
+      "Rutgers University-New Brunswick",
+      "Stanford University"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years. Strongest ROI: Stanford University.\nVerified data: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years",
+    "error": null
+  },
+  {
+    "i": 4,
+    "prompt": "Compare NJIT, Rutgers, and MIT for CS Master's ROI.",
+    "status": 200,
+    "elapsed_s": 4.133,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 3,
+    "resolved_candidates": [
+      "Rutgers University-New Brunswick",
+      "New Jersey Institute of Technology",
+      "Massachusetts Institute of Technology"
+    ],
+    "expected_colleges": [
+      "Massachusetts Institute of Technology",
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "answer_mentions": [
+      "Massachusetts Institute of Technology",
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Massachusetts Institute of Technology: total cost $75810, median salary $130000, break-even 0.58 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years. Strongest ROI: Massachusetts Institute of Technology.\nVerified data: Massachusetts Institute of Technology: total cost $75810, median salary $130000, break-even 0.58 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years",
+    "error": null
+  },
+  {
+    "i": 5,
+    "prompt": "How long does it take to break even for a Master's at Rutgers?",
+    "status": 200,
+    "elapsed_s": 4.134,
+    "answer_present": true,
+    "graph_type": "pie",
+    "profile_count": 1,
+    "resolved_candidates": [
+      "Rutgers University-New Brunswick"
+    ],
+    "expected_colleges": [
+      "Rutgers University-New Brunswick"
+    ],
+    "answer_mentions": [
+      "Rutgers University-New Brunswick"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, Rutgers University-New Brunswick shows the strongest ROI. Estimated total cost is $58000, median salary $110000, and break-even is about 0.53 years.\nVerified data: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years",
+    "error": null
+  },
+  {
+    "i": 6,
+    "prompt": "Is a Master's at NJIT worth it compared to stopping at a Bachelor's?",
+    "status": 200,
+    "elapsed_s": 4.184,
+    "answer_present": true,
+    "graph_type": "pie",
+    "profile_count": 1,
+    "resolved_candidates": [
+      "New Jersey Institute of Technology"
+    ],
+    "expected_colleges": [
+      "New Jersey Institute of Technology"
+    ],
+    "answer_mentions": [
+      "New Jersey Institute of Technology"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, New Jersey Institute of Technology shows the strongest ROI. Estimated total cost is $51000, median salary $95000, and break-even is about 0.54 years.\nVerified data: New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years",
+    "error": null
+  },
+  {
+    "i": 7,
+    "prompt": "Compare total annual cost and median salary for Rutgers vs NJIT.",
+    "status": 200,
+    "elapsed_s": 4.091,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 2,
+    "resolved_candidates": [
+      "Rutgers University-New Brunswick",
+      "New Jersey Institute of Technology"
+    ],
+    "expected_colleges": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "answer_mentions": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years. Strongest ROI: Rutgers University-New Brunswick.\nVerified data: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years",
+    "error": null
+  },
+  {
+    "i": 8,
+    "prompt": "Which is more cost-effective for CS: Rutgers NB or Stanford?",
+    "status": 200,
+    "elapsed_s": 4.115,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 2,
+    "resolved_candidates": [
+      "Rutgers University-New Brunswick",
+      "Stanford University"
+    ],
+    "expected_colleges": [
+      "Rutgers University-New Brunswick",
+      "Stanford University"
+    ],
+    "answer_mentions": [
+      "Rutgers University-New Brunswick",
+      "Stanford University"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years. Strongest ROI: Stanford University.\nVerified data: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years",
+    "error": null
+  },
+  {
+    "i": 9,
+    "prompt": "Compare ROI for NJIT vs Rutgers vs Stanford with a 10-year horizon.",
+    "status": 200,
+    "elapsed_s": 4.124,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 3,
+    "resolved_candidates": [
+      "Stanford University",
+      "Rutgers University-New Brunswick",
+      "New Jersey Institute of Technology"
+    ],
+    "expected_colleges": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick",
+      "Stanford University"
+    ],
+    "answer_mentions": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick",
+      "Stanford University"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years. Strongest ROI: Stanford University.\nVerified data: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years",
+    "error": null
+  },
+  {
+    "i": 10,
+    "prompt": "What is the estimated total cost for a CS Master's at Rutgers?",
+    "status": 200,
+    "elapsed_s": 4.084,
+    "answer_present": true,
+    "graph_type": "pie",
+    "profile_count": 1,
+    "resolved_candidates": [
+      "Rutgers University-New Brunswick"
+    ],
+    "expected_colleges": [
+      "Rutgers University-New Brunswick"
+    ],
+    "answer_mentions": [
+      "Rutgers University-New Brunswick"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, Rutgers University-New Brunswick shows the strongest ROI. Estimated total cost is $58000, median salary $110000, and break-even is about 0.53 years.\nVerified data: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years",
+    "error": null
+  },
+  {
+    "i": 11,
+    "prompt": "What is the median salary for a CS Master's from NJIT?",
+    "status": 200,
+    "elapsed_s": 4.144,
+    "answer_present": true,
+    "graph_type": "pie",
+    "profile_count": 1,
+    "resolved_candidates": [
+      "New Jersey Institute of Technology"
+    ],
+    "expected_colleges": [
+      "New Jersey Institute of Technology"
+    ],
+    "answer_mentions": [
+      "New Jersey Institute of Technology"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, New Jersey Institute of Technology shows the strongest ROI. Estimated total cost is $51000, median salary $95000, and break-even is about 0.54 years.\nVerified data: New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years",
+    "error": null
+  },
+  {
+    "i": 12,
+    "prompt": "Compare ROI of MIT vs Stanford vs Rutgers.",
+    "status": 200,
+    "elapsed_s": 4.13,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 3,
+    "resolved_candidates": [
+      "Stanford University",
+      "Rutgers University-New Brunswick",
+      "Massachusetts Institute of Technology"
+    ],
+    "expected_colleges": [
+      "Massachusetts Institute of Technology",
+      "Rutgers University-New Brunswick",
+      "Stanford University"
+    ],
+    "answer_mentions": [
+      "Massachusetts Institute of Technology",
+      "Rutgers University-New Brunswick",
+      "Stanford University"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Massachusetts Institute of Technology: total cost $75810, median salary $130000, break-even 0.58 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years. Strongest ROI: Stanford University.\nVerified data: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Massachusetts Institute of Technology: total cost $75810, median salary $130000, break-even 0.58 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years",
+    "error": null
+  },
+  {
+    "i": 13,
+    "prompt": "Is a CS Master's at Stanford worth it if tuition is high?",
+    "status": 200,
+    "elapsed_s": 4.116,
+    "answer_present": true,
+    "graph_type": "pie",
+    "profile_count": 1,
+    "resolved_candidates": [
+      "Stanford University"
+    ],
+    "expected_colleges": [
+      "Stanford University"
+    ],
+    "answer_mentions": [
+      "Stanford University"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, Stanford University shows the strongest ROI. Estimated total cost is $85000, median salary $140000, and break-even is about 0.61 years.\nVerified data: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years",
+    "error": null
+  },
+  {
+    "i": 14,
+    "prompt": "Compare tuition and living costs for Rutgers and NJIT.",
+    "status": 200,
+    "elapsed_s": 4.106,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 2,
+    "resolved_candidates": [
+      "Rutgers University-New Brunswick",
+      "New Jersey Institute of Technology"
+    ],
+    "expected_colleges": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "answer_mentions": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years. Strongest ROI: Rutgers University-New Brunswick.\nVerified data: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years",
+    "error": null
+  },
+  {
+    "i": 15,
+    "prompt": "Which school has the fastest break-even: NJIT or Rutgers?",
+    "status": 200,
+    "elapsed_s": 3.972,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 2,
+    "resolved_candidates": [
+      "Rutgers University-New Brunswick",
+      "New Jersey Institute of Technology"
+    ],
+    "expected_colleges": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "answer_mentions": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Insufficient context to determine which school has the faster break-even between New Jersey Institute of Technology and Rutgers University-New Brunswick, because no break-even or ROI timing details are provided.\nVerified data: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years",
+    "error": null
+  },
+  {
+    "i": 16,
+    "prompt": "Compare CS Master's ROI for Rutgers, NJIT, and University of Michigan.",
+    "status": 200,
+    "elapsed_s": 4.328,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 3,
+    "resolved_candidates": [
+      "University of Michigan",
+      "Rutgers University-New Brunswick",
+      "New Jersey Institute of Technology"
+    ],
+    "expected_colleges": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick",
+      "University of Michigan"
+    ],
+    "answer_mentions": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick",
+      "University of Michigan"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: University of Michigan: total cost $71500, median salary $115000, break-even 0.62 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years. Strongest ROI: University of Michigan.\nVerified data: University of Michigan: total cost $71500, median salary $115000, break-even 0.62 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years",
+    "error": null
+  },
+  {
+    "i": 17,
+    "prompt": "Is a Master's in CS at University of California, Berkeley worth it?",
+    "status": 200,
+    "elapsed_s": 4.116,
+    "answer_present": true,
+    "graph_type": "pie",
+    "profile_count": 1,
+    "resolved_candidates": [
+      "University of California, Berkeley"
+    ],
+    "expected_colleges": [
+      "University of California, Berkeley"
+    ],
+    "answer_mentions": [
+      "University of California, Berkeley"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, University of California, Berkeley shows the strongest ROI. Estimated total cost is $70700, median salary $135000, and break-even is about 0.52 years.\nVerified data: University of California, Berkeley: total cost $70700, median salary $135000, break-even 0.52 years",
+    "error": null
+  },
+  {
+    "i": 18,
+    "prompt": "Compare ROI for Carnegie Mellon vs Stanford vs MIT for CS Master's.",
+    "status": 200,
+    "elapsed_s": 4.122,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 3,
+    "resolved_candidates": [
+      "Carnegie Mellon University",
+      "Stanford University",
+      "Massachusetts Institute of Technology"
+    ],
+    "expected_colleges": [
+      "Carnegie Mellon University",
+      "Massachusetts Institute of Technology",
+      "Stanford University"
+    ],
+    "answer_mentions": [
+      "Carnegie Mellon University",
+      "Massachusetts Institute of Technology",
+      "Stanford University"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Carnegie Mellon University: total cost $80800, median salary $138000, break-even 0.59 years; Massachusetts Institute of Technology: total cost $75810, median salary $130000, break-even 0.58 years. Strongest ROI: Stanford University.\nVerified data: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Carnegie Mellon University: total cost $80800, median salary $138000, break-even 0.59 years; Massachusetts Institute of Technology: total cost $75810, median salary $130000, break-even 0.58 years",
+    "error": null
+  },
+  {
+    "i": 19,
+    "prompt": "What are the risks and caveats for a CS Master's ROI analysis?",
+    "status": 200,
+    "elapsed_s": 4.097,
+    "answer_present": true,
+    "graph_type": null,
+    "profile_count": 0,
+    "resolved_candidates": [],
+    "expected_colleges": [],
+    "answer_mentions": [],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": false,
+    "structured_valid": false,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": true,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "No verified data available for this institution.",
+    "error": null
+  },
+  {
+    "i": 20,
+    "prompt": "Give me a ranked list of ROI for Rutgers, NJIT, Stanford, and MIT.",
+    "status": 200,
+    "elapsed_s": 4.185,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 4,
+    "resolved_candidates": [
+      "Stanford University",
+      "Rutgers University-New Brunswick",
+      "New Jersey Institute of Technology",
+      "Massachusetts Institute of Technology"
+    ],
+    "expected_colleges": [
+      "Massachusetts Institute of Technology",
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick",
+      "Stanford University"
+    ],
+    "answer_mentions": [
+      "Massachusetts Institute of Technology",
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick",
+      "Stanford University"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Massachusetts Institute of Technology: total cost $75810, median salary $130000, break-even 0.58 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years. Strongest ROI: Stanford University.\nVerified data: Stanford University: total cost $85000, median salary $140000, break-even 0.61 years; Massachusetts Institute of Technology: total cost $75810, median salary $130000, break-even 0.58 years; Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years",
+    "error": null
+  },
+  {
+    "i": 21,
+    "prompt": "What scholarships does Rutgers offer?",
+    "status": 200,
+    "elapsed_s": 4.141,
+    "answer_present": true,
+    "graph_type": null,
+    "profile_count": 1,
+    "resolved_candidates": [
+      "Rutgers University-New Brunswick"
+    ],
+    "expected_colleges": [
+      "Rutgers University-New Brunswick"
+    ],
+    "answer_mentions": [],
+    "missing_in_answer": [
+      "Rutgers University-New Brunswick"
+    ],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": true,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "No verified scholarship information available.",
+    "error": null
+  },
+  {
+    "i": 22,
+    "prompt": "Compare Harvard and Princeton ROI.",
+    "status": 200,
+    "elapsed_s": 4.112,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 2,
+    "resolved_candidates": [
+      "Princeton University",
+      "Harvard University"
+    ],
+    "expected_colleges": [
+      "Harvard University",
+      "Princeton University"
+    ],
+    "answer_mentions": [
+      "Harvard University",
+      "Princeton University"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Harvard University: total cost $75500, median salary $135000, break-even 0.56 years; Princeton University: total cost $74900, median salary $133000, break-even 0.56 years. Strongest ROI: Harvard University.\nVerified data: Harvard University: total cost $75500, median salary $135000, break-even 0.56 years; Princeton University: total cost $74900, median salary $133000, break-even 0.56 years",
+    "error": null
+  },
+  {
+    "i": 23,
+    "prompt": "Is the ROI for Gotham University worth it?",
+    "status": 200,
+    "elapsed_s": 4.112,
+    "answer_present": true,
+    "graph_type": null,
+    "profile_count": 0,
+    "resolved_candidates": [],
+    "expected_colleges": [],
+    "answer_mentions": [],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": false,
+    "structured_valid": false,
+    "missing_in_structured": [],
+    "verified_missing": true,
+    "structured_is_null": true,
+    "structured_null_expected": true,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "No verified data available for this institution.",
+    "error": null
+  },
+  {
+    "i": 24,
+    "prompt": "Compare Rutgers vs NJIT.",
+    "status": 200,
+    "elapsed_s": 4.133,
+    "answer_present": true,
+    "graph_type": "bar",
+    "profile_count": 2,
+    "resolved_candidates": [
+      "Rutgers University-New Brunswick",
+      "New Jersey Institute of Technology"
+    ],
+    "expected_colleges": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "answer_mentions": [
+      "New Jersey Institute of Technology",
+      "Rutgers University-New Brunswick"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, here is a comparison: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years. Strongest ROI: Rutgers University-New Brunswick.\nVerified data: Rutgers University-New Brunswick: total cost $58000, median salary $110000, break-even 0.53 years; New Jersey Institute of Technology: total cost $51000, median salary $95000, break-even 0.54 years",
+    "error": null
+  },
+  {
+    "i": 25,
+    "prompt": "What is Harvard tuition?",
+    "status": 200,
+    "elapsed_s": 4.129,
+    "answer_present": true,
+    "graph_type": "pie",
+    "profile_count": 1,
+    "resolved_candidates": [
+      "Harvard University"
+    ],
+    "expected_colleges": [
+      "Harvard University"
+    ],
+    "answer_mentions": [
+      "Harvard University"
+    ],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": true,
+    "structured_valid": true,
+    "missing_in_structured": [],
+    "verified_missing": false,
+    "structured_is_null": false,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "Based on cached data, Harvard University shows the strongest ROI. Estimated total cost is $75500, median salary $135000, and break-even is about 0.56 years.\nVerified data: Harvard University: total cost $75500, median salary $135000, break-even 0.56 years",
+    "error": null
+  },
+  {
+    "i": 26,
+    "prompt": "Is Stanford worth it for CS Masters?",
+    "status": 200,
+    "elapsed_s": 4.109,
+    "answer_present": true,
+    "graph_type": null,
+    "profile_count": 0,
+    "resolved_candidates": [],
+    "expected_colleges": [
+      "Stanford University"
+    ],
+    "answer_mentions": [],
+    "missing_in_answer": [
+      "Stanford University"
+    ],
+    "missing_in_metadata": [
+      "Stanford University"
+    ],
+    "structured_present": false,
+    "structured_valid": false,
+    "missing_in_structured": [
+      "Stanford University"
+    ],
+    "verified_missing": false,
+    "structured_is_null": true,
+    "structured_null_expected": false,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "No verified data available for this institution.",
+    "error": null
+  },
+  {
+    "i": 27,
+    "prompt": "Is the ROI for University of Atlantis worth it?",
+    "status": 200,
+    "elapsed_s": 4.101,
+    "answer_present": true,
+    "graph_type": null,
+    "profile_count": 0,
+    "resolved_candidates": [],
+    "expected_colleges": [],
+    "answer_mentions": [],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": false,
+    "structured_valid": false,
+    "missing_in_structured": [],
+    "verified_missing": true,
+    "structured_is_null": true,
+    "structured_null_expected": true,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "No verified data available for this institution.",
+    "error": null
+  },
+  {
+    "i": 28,
+    "prompt": "Is the ROI for Fake Tech University worth it?",
+    "status": 200,
+    "elapsed_s": 4.101,
+    "answer_present": true,
+    "graph_type": null,
+    "profile_count": 0,
+    "resolved_candidates": [],
+    "expected_colleges": [],
+    "answer_mentions": [],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": false,
+    "structured_valid": false,
+    "missing_in_structured": [],
+    "verified_missing": true,
+    "structured_is_null": true,
+    "structured_null_expected": true,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "No verified data available for this institution.",
+    "error": null
+  },
+  {
+    "i": 29,
+    "prompt": "Is the ROI for Unknown Institution XYZ worth it?",
+    "status": 200,
+    "elapsed_s": 4.116,
+    "answer_present": true,
+    "graph_type": null,
+    "profile_count": 0,
+    "resolved_candidates": [],
+    "expected_colleges": [],
+    "answer_mentions": [],
+    "missing_in_answer": [],
+    "missing_in_metadata": [],
+    "structured_present": false,
+    "structured_valid": false,
+    "missing_in_structured": [],
+    "verified_missing": true,
+    "structured_is_null": true,
+    "structured_null_expected": true,
+    "llm_has_digits": false,
+    "llm_has_estimates": false,
+    "scholarship_routed": false,
+    "structured_shell_ok": false,
+    "totals_match": true,
+    "validator_ok": true,
+    "answer": "No verified data available for this institution.",
+    "error": null
+  }
+]

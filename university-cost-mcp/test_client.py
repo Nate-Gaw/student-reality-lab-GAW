@@ -3,6 +3,7 @@ Test client for the University Cost MCP server.
 """
 import asyncio
 import json
+import sys
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
@@ -12,7 +13,7 @@ async def test_mcp_server():
     
     # Start MCP server
     server_params = StdioServerParameters(
-        command="python",
+        command=sys.executable,
         args=["server/mcp_server.py"],
     )
     
