@@ -49,10 +49,7 @@ app = FastAPI(title="college-roi-advisor")
 
 
 def _read_frontend_dir() -> Path:
-    dist_dir = PROJECT_ROOT / "frontend" / "dist"
-    if dist_dir.exists():
-        return dist_dir
-    return PROJECT_ROOT / "frontend"
+    return PROJECT_ROOT / "frontend" / "dist"
 
 
 @app.on_event("startup")
@@ -202,6 +199,11 @@ async def graphs(request: Request) -> JSONResponse:
     profiles = attach_roi(get_university_profiles(names))
     graph = build_graph_from_profiles(profiles)
     return JSONResponse(content={"graph": graph})
+
+
+@app.get("/debug")
+def debug() -> Dict[str, Any]:
+    return {"frontend_path": str(_read_frontend_dir())}
 
 
 app.mount("/", StaticFiles(directory=str(_read_frontend_dir()), html=True), name="frontend")

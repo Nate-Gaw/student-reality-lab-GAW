@@ -21,6 +21,8 @@ dist/
 build/
 .venv/
 venv/
+!docs/frontend/dist/
+!docs/frontend/dist/**
 
 # IDE
 .vscode/
