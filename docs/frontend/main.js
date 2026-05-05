@@ -1,12 +1,12 @@
 import Chart from "https://cdn.jsdelivr.net/npm/chart.js@4.4.1/auto/+esm";
 
-const API_BASE_URL =
-  document.querySelector('meta[name="api-base-url"]')?.content || "http://localhost:5056";
+const DEFAULT_API_BASE_URL = window.location.protocol === "file:" ? "http://127.0.0.1:5055" : "/api";
+const API_BASE_URL = document.querySelector('meta[name="api-base-url"]')?.content || DEFAULT_API_BASE_URL;
 
 function validateApiUrl(url) {
-  if (!url || !/^https?:\/\//i.test(url)) {
+  if (!url || !(url.startsWith("/") || /^https?:\/\//i.test(url))) {
     throw new Error(
-      `Invalid VITE_API_BASE_URL: "${url}". Set it to a backend URL like http://127.0.0.1:5055`
+      `Invalid API base URL: "${url}". Use a same-domain path like /api or an absolute backend URL like http://127.0.0.1:5055`
     );
   }
 }
@@ -316,7 +316,7 @@ async function askAdvisor(userPrompt) {
   } catch (error) {
     if (String(error?.message || "").toLowerCase().includes("failed to fetch")) {
       throw new Error(
-        `Cannot reach backend at ${API_BASE_URL}. Start it with: python -m backend.app`
+        `Cannot reach backend at ${API_BASE_URL}. Start it with: uvicorn backend.app.main:app --host 127.0.0.1 --port 5055`
       );
     }
     throw error;

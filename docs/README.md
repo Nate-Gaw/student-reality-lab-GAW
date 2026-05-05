@@ -2,6 +2,8 @@
 
 This project rebuilds the ROI advisor with a clean backend, cached data access, and an unchanged frontend UI.
 
+Important: run the commands from this `docs/` folder. The backend service now starts from `backend.app.main:app`, and the frontend is built to `frontend/dist` for Railway.
+
 ## Structure
 
 - frontend/ - UI (copied from Website-Backup with no visual changes)
@@ -11,30 +13,54 @@ This project rebuilds the ROI advisor with a clean backend, cached data access, 
 
 ## Quick Start
 
-1) Create and activate a Python environment.
-2) Install backend dependencies:
+1) Change into this folder if you are not already here:
+
+```
+cd docs
+```
+
+2) Create and activate a Python environment.
+3) Install backend dependencies:
 
 ```
 pip install -r requirements.txt
 ```
 
-3) Initialize the database schema:
+4) Initialize the database schema:
 
 ```
 sqlite3 data/universities.db < backend/database/schema.sql
 ```
 
-4) Start the backend:
-
-```
-python -m backend.app
-```
-
-5) Install frontend dependencies and run UI:
+5) Build the frontend for production:
 
 ```
 npm install
-npm run dev
+npm run build
+```
+
+6) Start the backend:
+
+```
+uvicorn backend.app.main:app --host 127.0.0.1 --port 5055
+```
+
+For local development, you can still run `npm run dev` in a second terminal and keep the backend on port `5055`. The dev server proxies `/api` to the backend.
+
+## Railway Deployment
+
+Use `docs` as the Railway service root.
+
+Build command:
+
+```
+cd docs && pip install -r requirements.txt && npm install && npm run build
+```
+
+Start command:
+
+```
+cd docs && uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
 ```
 
 ## Environment Variables
@@ -63,6 +89,8 @@ See .env for defaults:
   - Run: `python -m backend.ingestion.rag_ingestion path/to/folder`
 
 ## Sprint Tests
+
+Run the tests from `docs/` so their relative paths and same-domain `/api` routing resolve correctly.
 
 Sprint 1: Chat system
 - Prompt: "Is college worth it?"
