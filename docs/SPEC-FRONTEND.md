@@ -1,133 +1,172 @@
-🚀 SPEC: Fix Frontend Serving for FastAPI App on Railway
+🚀 SPEC: Fix Full-Stack Railway Deployment (FastAPI + Static Frontend)
 🎯 Objective
 
-Ensure the FastAPI backend correctly serves the built frontend so that the deployed app on Railway responds at / without errors.
+Fully repair and validate a full-stack application deployed on Railway where:
 
-🧠 Problem Summary
+FastAPI backend runs correctly
+Frontend is served from FastAPI static mount
+/ route correctly loads the UI
+/api/* routes function normally
+No “Application failed to respond” errors occur
 
-Current state:
+The agent must implement, test, and validate all fixes independently.
 
-Backend (FastAPI) starts successfully ✅
-Railway reports “Application failed to respond” ❌
-Root cause: frontend is not being served correctly
+🧠 CURRENT PROBLEM SUMMARY
 
-Key issue:
+The application currently:
 
-The app tries to serve frontend/ instead of the built frontend/dist/
-In production, only the built static assets should be served
-🛠️ REQUIRED CHANGES
-✅ 1. Build the frontend
+Starts successfully with Uvicorn ✔
+Fails at runtime when accessed via browser ❌
+Likely cause: frontend not being served correctly from frontend/dist
+🏗️ PROJECT STRUCTURE (AUTHORITATIVE)
+docs/
+  backend/
+    app/
+      main.py   ← FastAPI entrypoint
+  frontend/
+    dist/       ← REQUIRED production build output
+🚨 REQUIRED FIXES
+✅ STEP 1 — Fix frontend serving logic
 
-From the docs/ directory:
+Modify:
 
-npm install
-npm run build
-
-This must generate:
-
-docs/frontend/dist/index.html
-docs/frontend/dist/assets/...
-✅ 2. Ensure build output is committed
-
-Verify that dist/ is NOT ignored in .gitignore.
-
-Required:
-
-docs/frontend/dist/
-
-must exist in the repository pushed to Railway.
-
-✅ 3. Update FastAPI static file serving
-
-Modify docs/backend/app/main.py
-
-🔁 Replace this function:
+docs/backend/app/main.py
+Replace function:
 def _read_frontend_dir() -> Path:
     dist_dir = PROJECT_ROOT / "frontend" / "dist"
     if dist_dir.exists():
         return dist_dir
     return PROJECT_ROOT / "frontend"
-✅ With this:
+With:
 def _read_frontend_dir() -> Path:
     return PROJECT_ROOT / "frontend" / "dist"
-✅ 4. Ensure frontend is mounted correctly
+✅ STEP 2 — Ensure frontend build exists
 
-Confirm this line exists at the VERY END of main.py:
+Run:
 
-app.mount("/", StaticFiles(directory=str(_read_frontend_dir()), html=True), name="frontend")
+cd docs
+npm install
+npm run build
 
-This must come AFTER all /api/... routes.
+Validate:
 
-✅ 5. Fix frontend API calls (CRITICAL)
+docs/frontend/dist/index.html exists
 
-Search frontend code (docs/frontend/) for any of:
+If missing → build is considered FAILED.
 
+✅ STEP 3 — Ensure static mount is correct
+
+Confirm this exists at end of main.py:
+
+app.mount(
+    "/",
+    StaticFiles(directory=str(_read_frontend_dir()), html=True),
+    name="frontend"
+)
+
+This must be the LAST route registered.
+
+✅ STEP 4 — Add diagnostic endpoints
+
+Add BEFORE static mount:
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+@app.get("/debug/frontend-path")
+def debug_frontend():
+    return {"path": str(_read_frontend_dir())}
+✅ STEP 5 — Validate frontend API usage
+
+Scan frontend code and ensure:
+
+❌ REMOVE:
 http://localhost:8000
 http://127.0.0.1
-❌ Replace with:
+✅ REPLACE WITH:
 /api/chat
 /api/graphs
+✅ STEP 6 — Confirm backend start command
 
-Use relative paths only.
+Ensure Railway start command is:
 
-✅ 6. Add temporary debug route (optional but recommended)
+uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+🧪 REQUIRED SELF-TESTING (MANDATORY)
 
-Add this ABOVE app.mount:
+After implementing changes, the agent must verify:
 
-@app.get("/debug")
-def debug():
-    return {"frontend_path": str(_read_frontend_dir())}
+✔ Test 1 — Backend health
 
-Used to verify correct path in production.
+Request:
 
-✅ 7. Verify project root logic
+GET /health
 
-Ensure this line exists and is unchanged:
+Expected:
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+{"status": "ok"}
+✔ Test 2 — Frontend mount path
 
-This must resolve to:
+Request:
 
-docs/
-✅ 8. Redeploy on Railway
+GET /debug/frontend-path
 
-Trigger a fresh deploy after all changes.
+Expected:
 
-🧪 SUCCESS CRITERIA
+"path": ".../frontend/dist"
+✔ Test 3 — Root endpoint
 
-After deployment:
+Request:
 
-✅ Backend
+GET /
 
-Logs show:
+Expected:
 
-Uvicorn running on http://0.0.0.0:$PORT
-Application startup complete
-✅ Frontend
+Returns HTML page (NOT JSON, NOT 404, NOT error page)
+✔ Test 4 — API route
 
-Visiting:
+Request:
 
-https://<your-app>.up.railway.app/
+POST /api/chat
 
-loads the UI (NOT an error page)
+Expected:
 
-✅ API
-
-/api/health returns:
-
-{"ok": true}
-✅ No Errors
-No “Application failed to respond”
-No missing JS/CSS errors in browser console
+Valid JSON response OR controlled error (not crash)
 🚨 FAILURE CONDITIONS
 
-If still broken, check:
+Mark deployment FAILED if any occur:
 
-dist/ folder missing ❌
-frontend not built ❌
-wrong path in _read_frontend_dir() ❌
-frontend still using localhost ❌
-🎯 FINAL RESULT
-FastAPI serves API at /api/...
-Frontend loads at /
-Full-stack app runs entirely on Railway
+/ returns 404 or blank response
+frontend directory missing
+runtime crash on request
+missing dist/ folder
+localhost references remain in frontend
+uvicorn starts but app is unreachable
+🎯 SUCCESS CRITERIA
+
+Deployment is considered SUCCESSFUL only if:
+
+✔ Backend starts without errors
+✔ /health returns OK
+✔ / serves frontend UI
+✔ /api/* endpoints work
+✔ No Railway “Application failed to respond” error
+✔ Frontend assets load correctly
+
+🧠 AUTONOMOUS REQUIREMENTS
+
+The agent MUST:
+
+Apply fixes without user confirmation
+Build frontend if missing
+Validate endpoints via HTTP calls
+Read logs to confirm runtime behavior
+Retry fixes if failure conditions occur
+Produce final success/failure report
+🚀 FINAL OUTCOME
+
+A fully working full-stack deployment where:
+
+FastAPI handles backend logic
+Static frontend is served via /
+Railway deployment is stable and production-ready

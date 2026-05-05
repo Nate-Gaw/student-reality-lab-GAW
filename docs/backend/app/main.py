@@ -57,6 +57,11 @@ def _startup() -> None:
     Base.metadata.create_all(bind=engine)
 
 
+@app.get("/health")
+def root_health() -> Dict[str, Any]:
+    return {"status": "ok"}
+
+
 @app.get("/api/health")
 def health() -> Dict[str, Any]:
     return {"ok": True, "service": "college-roi-advisor"}
@@ -201,8 +206,8 @@ async def graphs(request: Request) -> JSONResponse:
     return JSONResponse(content={"graph": graph})
 
 
-@app.get("/debug")
-def debug() -> Dict[str, Any]:
+@app.get("/debug/frontend-path")
+def debug_frontend() -> Dict[str, Any]:
     return {"frontend_path": str(_read_frontend_dir())}
 
 
