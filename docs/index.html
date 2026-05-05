@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI College ROI Advisor</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg-top: #f6f8fb;
+      --bg-bottom: #edf2f7;
+      --panel: rgba(255, 255, 255, 0.9);
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #0ea5a8;
+      --accent-strong: #02848a;
+      --line: #dbe2ea;
+      --shadow: 0 18px 48px rgba(15, 23, 42, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: "Manrope", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(14, 165, 168, 0.12), transparent 34%),
+        radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.12), transparent 30%),
+        linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+    }
+
+    .shell {
+      width: min(960px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+
+    .hero {
+      padding: 34px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 0.8rem;
+      font-family: "IBM Plex Mono", monospace;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.8rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 68ch;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+    }
+
+    .button.primary {
+      background: linear-gradient(180deg, var(--accent), var(--accent-strong));
+      color: #ecfeff;
+      box-shadow: 0 12px 24px rgba(14, 165, 168, 0.24);
+    }
+
+    .button.secondary {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      padding: 0 34px 34px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 18px;
+      min-height: 140px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .card p {
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 14px; }
+      .hero, .grid { padding-left: 18px; padding-right: 18px; }
+      .grid { grid-template-columns: 1fr; padding-bottom: 18px; }
+      .hero { padding-top: 24px; padding-bottom: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">GitHub Pages entry</p>
+      <h1>AI College ROI Advisor</h1>
+      <p>
+        Start from here on GitHub Pages, then open the advisor interface to compare tuition,
+        salary, break-even timing, and scholarship context for different schools.
+      </p>
+      <div class="actions">
+        <a class="button primary" href="./frontend/index.html">Open advisor</a>
+        <a class="button secondary" href="./frontend/index.html">Go to app page</a>
+      </div>
+    </section>
+
+    <section class="grid" aria-label="What this site includes">
+      <article class="card">
+        <h2>Financial analysis</h2>
+        <p>Compare debt, salary, and long-run net earnings with the ROI engine.</p>
+      </article>
+      <article class="card">
+        <h2>University lookup</h2>
+        <p>Resolved school names are matched against cached university data and aliases.</p>
+      </article>
+      <article class="card">
+        <h2>Charts and notes</h2>
+        <p>Visual comparisons and editable takeaways stay alongside the conversation.</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
